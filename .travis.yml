@@ -31,7 +31,7 @@ install:
   - conda config --add channels tthatcher95
   - conda config --add channels conda-forge
   - conda env create -q -f environment.yml --name test_env python=$PYTHON_VERSION
-
+  - source activate test_env
   # Development installation
   - conda install pip setuptools
   - conda install --quiet pytest pytest-cov nbsphinx

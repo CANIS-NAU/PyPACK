@@ -1,5 +1,6 @@
 from mordecai import Geoparser
 import pandas as pd
+from tqdm import tqdm
 
 def locations_df(csv_file="", sep='\t'):
     '''
@@ -45,5 +46,6 @@ def locations_df(csv_file="", sep='\t'):
 
     # Map locations to text
     tweet_df = pd.read_csv(csv_file, sep=sep)
-    tweet_df['locs'] = tweet_df.apply(parse_tweet, axis = 1)
+    tqdm.pandas()
+    tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, axis = 1)
     return tweet_df
