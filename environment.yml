@@ -4,14 +4,12 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
-  - python=3
+  - python=3.7
   - pandas
   - geopandas
   - folium
   - beautifulsoup4
   - urllib3
-  - tensorflow
-  - nomkl
   - pip
   - pip:
     - shapely
