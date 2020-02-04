@@ -26,17 +26,18 @@ before_install:
   - conda update -q conda
   - conda info -a   # Useful for debugging any issues with conda
   # Create the env
-  - conda env create -q -f environment.yml python=$PYTHON_VERSION
-  - source activate pypack
-
 
 install:
   # Install dependencies
   - conda config --add channels tthatcher95
   - conda config --add channels conda-forge
-  # https://github.com/GoogleCloudPlatform/google-cloud-python/issues/2990
-  - conda install pip setuptools
+  - conda env create -q -f environment.yml -n test_env python=$PYTHON_VERSION
+  - source activate test_env
 
+  # Development installation
+  - conda install pip setuptools
+  - conda install --quiet pytest pytest-cov pytest-qt nbsphinx
+  - pip install coveralls travis-sphinx
 
 
 script:
