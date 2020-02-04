@@ -4,6 +4,7 @@ dist/
 build/
 libpypack/__pycache__/
 libpypack/examples/__pycache__/
+test_data/__pycache__/__init__.cpython-37.pyc
 
 # Geonames index, this should be downloaded locally not on Git
 libpypack/examples/geonames_index/
