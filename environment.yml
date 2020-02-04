@@ -13,7 +13,7 @@ dependencies:
   - tensorflow
   - nomkl
   - pip
-  pip:
-    shapely
-    mordecai
-    docker
+  - pip:
+    - shapely
+    - mordecai
+    - docker
