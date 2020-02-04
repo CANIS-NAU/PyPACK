@@ -1,0 +1,12 @@
+# Packaging information
+libpypack.egg-info/
+dist/
+build/
+libpypack/__pycache__/
+libpypack/examples/__pycache__/
+
+# Geonames index, this should be downloaded locally not on Git
+libpypack/examples/geonames_index/
+
+# MAC
+.DS_Store
