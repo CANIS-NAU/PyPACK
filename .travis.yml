@@ -31,8 +31,9 @@ install:
   # Install dependencies
   - conda config --add channels tthatcher95
   - conda config --add channels conda-forge
-  - conda env create -q -f environment.yml -n test_env python=$PYTHON_VERSION
+  - conda create -q -name test_env python=$PYTHON_VERSION
   - source activate test_env
+  - conda env update --file enviorment.yml
 
   # Development installation
   - conda install pip setuptools
