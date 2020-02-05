@@ -1,6 +1,6 @@
 import pytest
-from mordecai import Geoparser
 from libpypack.locations import map_locations
+from mordecai import Geoparser
 import test_data
 import os
 
