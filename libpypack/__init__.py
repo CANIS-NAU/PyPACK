@@ -23,13 +23,14 @@ if not os.path.isdir(examples.__path__[0] + '/geonames_index'):
 client = docker.from_env()
 
 # If the container is in existence, grab it
-elastic_container = client.containers.get("pypack_elastic")
+try:
+    elastic_container = client.containers.get("pypack_elastic")
 
-# If running, stop it and remove it.
-# NOTE: If the container is corrupt it messes up.
-if(elastic_container.status == "running"):
-    elastic_container.stop()
-    elastic_container.remove()
+    # If running, stop it and remove it.
+    # NOTE: If the container is corrupt it messes up.
+    if(elastic_container.status == "running"):
+        elastic_container.stop()
+        elastic_container.remove()
 
 # Pull the new image
 client.images.pull('elasticsearch:5.5.2')
