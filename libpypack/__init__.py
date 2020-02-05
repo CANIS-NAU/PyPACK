@@ -5,6 +5,9 @@ import tarfile
 import requests
 import os
 import libpypack.examples as examples
+import spacy
+
+nlp = spacy.load("en_core_web_lg")
 
 # Check if the geonames_index has been downloaded
 if not os.path.isdir(examples.__path__[0] + '/geonames_index'):
@@ -31,7 +34,7 @@ try:
     if(elastic_container.status == "running"):
         elastic_container.stop()
         elastic_container.remove()
-        
+
 except Exception as e:
     print(e)
 
