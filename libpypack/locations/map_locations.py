@@ -1,6 +1,7 @@
 from mordecai import Geoparser
 import pandas as pd
 from tqdm import tqdm
+import numpy as np
 
 def locations_df(csv_file="", sep='\t'):
     '''
