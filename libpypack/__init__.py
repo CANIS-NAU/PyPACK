@@ -31,6 +31,9 @@ try:
     if(elastic_container.status == "running"):
         elastic_container.stop()
         elastic_container.remove()
+        
+except Exception as e:
+    print(e)
 
 # Pull the new image
 client.images.pull('elasticsearch:5.5.2')
