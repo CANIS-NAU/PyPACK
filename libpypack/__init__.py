@@ -7,7 +7,7 @@ import os
 import libpypack.examples as examples
 import subprocess
 
-subprocess.call("python -m spacy download en_core_web_lg")
+subprocess.call(["python", "-m", "spacy", "download", "en_core_web_lg"])
 
 # Check if the geonames_index has been downloaded
 if not os.path.isdir(examples.__path__[0] + '/geonames_index'):
