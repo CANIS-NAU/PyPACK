@@ -3,9 +3,9 @@ language: generic
 env:
   - PYTHON_VERSION=3.5
   - PYTHON_VERSION=3.6
+  - PYTHON_VERSION=3.7
 os:
   - linux
-  - osx
 
 branches:
   - master
@@ -55,7 +55,6 @@ after_success:
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
         anaconda -t="$CONDA_UPLOAD_TOKEN" upload $builddir --force;
-      fi
     fi
   # # Docs to gh-pages
   # - source activate test_env  # Reactivate the env to have all deps installed.
