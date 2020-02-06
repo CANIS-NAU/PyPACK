@@ -12,4 +12,4 @@ def test_locations():
 def test_geoparser():
     geo = Geoparser()
     result = geo.geoparse("I traveled from Oxford to Ottawa.")
-    assert result[0]['lat'] == '51.75222' and result[0]['lon'] == '-1.25596'
+    assert x[0]['geo']['lat'] == '51.75222' and x[0]['geo']['lon'] == '-1.25596'
