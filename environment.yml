@@ -1,0 +1,17 @@
+name: pypack
+channels:
+  - tthatcher95
+  - conda-forge
+  - anaconda
+dependencies:
+  - python=3.7
+  - pandas
+  - geopandas
+  - folium
+  - beautifulsoup4
+  - urllib3
+  - pip
+  - pip:
+    - shapely
+    - mordecai
+    - docker

@@ -1,0 +1,38 @@
+{% set version = "0.1.0" %}
+
+package:
+  name: pypack
+  version: {{ version }}
+
+source:
+  git_url: https://github.com/CANIS-NAU/PyPACK
+  git_rev: master
+
+build:
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
+  skip: True  # [not py3k]
+
+requirements:
+  build:
+    - pandas
+    - setuptools
+    - geopandas
+    - folium
+    - beautifulsoup4
+    - urllib3
+    - mordecai
+  run:
+    - pandas
+    - geopandas
+    - folium
+    - beautifulsoup4
+    - urllib3
+    - mordecai
+
+test:
+  imports:
+    - libpypack
+
+about:
+  home: https://github.com/CANIS-NAU/PyPACK
+  license: Unlicense
