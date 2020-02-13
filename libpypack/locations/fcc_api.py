@@ -68,4 +68,4 @@ def block_query(lat, lon, censusYear='2019', format='json', showall=False):
     return r.text
 
 # Example:
-block_query(lat=35.1983, lon=-111.6513)
+# block_query(lat=35.1983, lon=-111.6513)
