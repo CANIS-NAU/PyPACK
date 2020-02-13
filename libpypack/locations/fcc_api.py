@@ -1,5 +1,5 @@
 import requests
-
+import json
 def area_query(lat, lon, format='json'):
     """
     Name: Block API
@@ -63,9 +63,6 @@ def block_query(lat, lon, censusYear='2019', format='json', showall=False):
       Format type response
     """
 
-    url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&censusYear={}&showall={}&format={}".format(int(lat), int(lon), year, str(showall), str(format))
+    url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&censusYear={}&showall={}&format={}".format(int(lat), int(lon), censusYear, str(showall), str(format))
     r = requests.get(url)
     return r.text
-
-# Example:
-block_query(lat=35.1983, lon=-111.6513)
