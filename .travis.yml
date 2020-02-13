@@ -6,6 +6,11 @@ env:
   - PYTHON_VERSION=3.7
 os:
   - linux
+  - osx
+
+jobs:
+  allow_failures:
+    - os: osx
 
 branches:
   - master
