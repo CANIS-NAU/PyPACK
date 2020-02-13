@@ -35,7 +35,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     packages=find_packages(),
-    install_requires=['numpy', 'pandas', 'mordecai'],
+    install_requires=['numpy', 'pandas'],
     extras_require={
         'dev': [],
         'test': ['coverage', 'pytest-cov', 'coveralls'],
