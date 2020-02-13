@@ -13,21 +13,11 @@ build:
   skip: True  # [not py3k]
 
 requirements:
-  build:
-    - pandas
-    - setuptools
-    - geopandas
-    - folium
-    - beautifulsoup4
-    - urllib3
-    - mordecai
+  host:
+    - python
+    - pip
   run:
-    - pandas
-    - geopandas
-    - folium
-    - beautifulsoup4
-    - urllib3
-    - mordecai
+    - python
 
 test:
   imports:
