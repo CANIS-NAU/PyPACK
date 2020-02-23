@@ -1,9 +1,10 @@
-import docker
 import tarfile
 import requests
 import os
 import libpypack.examples as examples
 import subprocess
+import docker
+
 
 subprocess.call(["python", "-m", "spacy", "download", "en_core_web_lg"])
 
