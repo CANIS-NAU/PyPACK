@@ -22,10 +22,14 @@ if not os.path.isdir(examples.__path__[0] + '/geonames_index'):
     my_tar.close()
 
 # Using the Docker API, create a client to interact with
+print("Starting Docker")
 client = docker.from_env()
+print("Docker Started")
+
 
 # If the container is in existence, grab it
 try:
+    print("Trying container")
     elastic_container = client.containers.get("pypack_elastic")
 
     # If running, stop it and remove it.
@@ -38,6 +42,7 @@ except Exception as e:
     print(e)
 
 # Pull the new image
+print('Pulling container')
 client.images.pull('elasticsearch:5.5.2')
 
 # Bind the geonames_index in the examples directory, to the Docker container
