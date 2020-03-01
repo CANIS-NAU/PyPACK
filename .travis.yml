@@ -57,6 +57,8 @@ after_success:
   - conda config --set anaconda_upload no
   - conda build recipe -q
   - builddir=(`conda build recipe --output`)
+  - echo CONDA_UPLOAD_TOKEN
+  - echo DUMMY_TOKEN
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
         anaconda -t="$CONDA_UPLOAD_TOKEN" upload $builddir --force;

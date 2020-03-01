@@ -52,10 +52,14 @@ def locations_df(csv_file="", sep='\t', directory=False):
             tqdm.pandas()
             tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, axis = 1)
             tweet_df.to_csv(file[-4:] + "_mord.csv")
-            return "Process Complete"     
+        return "Process Complete"
     else:
         # Map locations to text
         tweet_df = pd.read_csv(csv_file, sep=sep)
         tqdm.pandas()
-        tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, axis = 1)
+        tweet_df['locs'] = tweet_df[0:100].progress_apply(parse_tweet, axis = 1)
         return tweet_df
+
+def write_csv(output_dir, file, df, sep='\t'):
+    df.to_csv(output_dir + file, sep=sep)
+    return 0
