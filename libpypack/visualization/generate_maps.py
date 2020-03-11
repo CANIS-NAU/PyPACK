@@ -28,12 +28,15 @@ def create_new_df(tweet_df, column_name='locs'):
 
     return location_df
 
-def generate_overlay_plot(tweet_df, filename=state_file.__path__[0] + "/states.shp", column_name='locs'):
+def generate_overlay_gdf(tweet_df, filename=state_file.__path__[0] + "/states.shp", column_name='locs'):
     location_df = create_new_df(tweet_df, column_name)
     loc_gdf = geopandas.GeoDataFrame(
         location_df, geometry=geopandas.points_from_xy(location_df.Longitude, location_df.Latitude))
 
-    df = geopandas.read_file(filename)
+    gdf = geopandas.read_file(filename)
+    return gdf
+
+def plot_gdf(gdf):
     # Plot correctly
     fig, ax = plt.subplots(figsize = (75, 75))
     ax.set_aspect('equal')

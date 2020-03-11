@@ -7,6 +7,7 @@ env:
 os:
   - linux
   - osx
+  - windows
 
 jobs:
   allow_failures:
@@ -46,7 +47,18 @@ install:
 
 
 script:
-  - pytest --cov=libpypack
+    - if [ "$TRAVIS_OS_NAME" == "linux" ];
+        then
+          pytest --cov=libpypack;
+      elif [ "$TRAVIS_OS_NAME" == "osx"  ];
+        then
+          pytest tests/locations/osx/;
+      elif [ "$TRAVIS_OS_NAME" == "windows"  ];
+        then
+          pytest tests/locations/os/;
+      else
+        echo "Invalid OS";
+      fi
 
 after_success:
   # Code Coverage

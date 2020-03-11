@@ -8,6 +8,7 @@ test_data/__pycache__/__init__.cpython-37.pyc
 libpypack/locations/__pycache__/
 
 # Geonames index, this should be downloaded locally not on Git
+geonames_index.tar.gz
 libpypack/examples/geonames_index/
 
 # MAC
