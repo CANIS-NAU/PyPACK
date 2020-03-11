@@ -59,6 +59,7 @@ after_success:
   - conda config --set anaconda_upload no
   - conda build recipe -q
   - builddir=(`conda build recipe --output`)
+  - echo $TEST_TOKEN
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
         echo $TEST_TOKEN
