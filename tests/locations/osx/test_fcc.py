@@ -1,5 +1,5 @@
 import pytest
-from libpypack.locations import fcc_api
+from libpypack.fcc_wrapper import fcc_api
 import json
 
 def block_test():
