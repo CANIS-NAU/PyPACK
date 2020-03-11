@@ -1,8 +1,5 @@
 import pytest
 from libpypack.locations import fcc_api
-from mordecai import Geoparser
-import test_data
-import os
 import json
 
 def block_test():

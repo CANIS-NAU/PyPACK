@@ -1,16 +1,11 @@
 language: generic
 
 env:
-  - PYTHON_VERSION=3.5
-  - PYTHON_VERSION=3.6
   - PYTHON_VERSION=3.7
 os:
   - linux
   - osx
-
-jobs:
-  allow_failures:
-    - os: osx
+  - windows
 
 branches:
   - master
@@ -46,7 +41,18 @@ install:
 
 
 script:
-  - pytest --cov=libpypack
+    - if [ "$TRAVIS_OS_NAME" == "linux" ];
+        then
+          pytest tests/locations/linux/;
+      elif [ "$TRAVIS_OS_NAME" == "osx"  ];
+        then
+          pytest tests/locations/osx/;
+      elif [ "$TRAVIS_OS_NAME" == "windows"  ];
+        then
+          pytest tests/locations/windows/;
+      else
+        echo "Invalid OS";
+      fi
 
 after_success:
   # Code Coverage
