@@ -5,7 +5,6 @@ env:
 os:
   - linux
   - osx
-  - windows
 
 branches:
   - master
@@ -47,9 +46,6 @@ script:
       elif [ "$TRAVIS_OS_NAME" == "osx"  ];
         then
           pytest tests/locations/osx/;
-      elif [ "$TRAVIS_OS_NAME" == "windows"  ];
-        then
-          pytest tests/locations/windows/;
       else
         echo "Invalid OS";
       fi
@@ -63,8 +59,6 @@ after_success:
   - conda config --set anaconda_upload no
   - conda build recipe -q
   - builddir=(`conda build recipe --output`)
-  - echo $CONDA_UPLOAD_TOKEN
-  - echo $DUMMY_TOKEN
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
         anaconda -t=$CONDA_UPLOAD_TOKEN upload $builddir --force;
