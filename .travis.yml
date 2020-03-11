@@ -47,6 +47,7 @@ script:
           pytest tests/locations/linux/;
       elif [ "$TRAVIS_OS_NAME" == "osx"  ];
         then
+          echo "In OSX"
           pytest tests/locations/osx/;
       elif [ "$TRAVIS_OS_NAME" == "windows"  ];
         then
