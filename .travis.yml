@@ -49,13 +49,13 @@ install:
 script:
     - if [ "$TRAVIS_OS_NAME" == "linux" ];
         then
-          pytest --cov=libpypack;
+          pytest tests/locations/linux/;
       elif [ "$TRAVIS_OS_NAME" == "osx"  ];
         then
           pytest tests/locations/osx/;
       elif [ "$TRAVIS_OS_NAME" == "windows"  ];
         then
-          pytest tests/locations/os/;
+          pytest tests/locations/windows/;
       else
         echo "Invalid OS";
       fi
