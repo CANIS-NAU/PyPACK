@@ -63,7 +63,7 @@ after_success:
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
         conda config --set anaconda_upload yes;
-        conda build --token $CONDA_UPLOAD_TOKEN --python $PYTHON_VERSION -c conda-forge conda;
+        conda build --token $CONDA_UPLOAD_TOKEN --python $PYTHON_VERSION -c conda-forge recipe;
     fi
   # # Docs to gh-pages
   # - source activate test_env  # Reactivate the env to have all deps installed.

@@ -1,6 +1,5 @@
 name: pypack
 channels:
-  - tthatcher95
   - conda-forge
   - anaconda
 dependencies:
