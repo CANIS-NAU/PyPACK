@@ -41,6 +41,7 @@ install:
 
 
 script:
+    - echo $TRAVIS_OS_NAME
     - if [ "$TRAVIS_OS_NAME" == "linux" ];
         then
           pytest tests/locations/linux/;
