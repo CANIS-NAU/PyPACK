@@ -62,8 +62,8 @@ after_success:
   - echo $TEST_TOKEN
   - |
     if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        echo $TEST_TOKEN
-        anaconda -t=$CONDA_UPLOAD_TOKEN upload $builddir --force;
+        conda config --set anaconda_upload yes;
+        conda build --token $CONDA_UPLOAD_TOKEN --python $PYTHON_VERSION -c usgs-astrogeology conda;
     fi
   # # Docs to gh-pages
   # - source activate test_env  # Reactivate the env to have all deps installed.
