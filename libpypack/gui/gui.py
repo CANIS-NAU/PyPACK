@@ -1,12 +1,10 @@
-# from fbs_runtime.application_context.PyQt5 import ApplicationContext
-# from PyQt5.QtCore import QDateTime, Qt, QTimer
-
 import sys
 import libpypack
 import pandas as pd
+import pyqtgraph as pg
+
 from libpypack.locations import map_locations
 from libpypack.visualization import generate_maps
-import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -221,8 +219,10 @@ class PYPACK_GUI(QMainWindow):
         self.show()
 
 
-if __name__ == '__main__':
-
+def main():
     app = QApplication(sys.argv)
     ex = PYPACK_GUI()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

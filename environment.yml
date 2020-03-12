@@ -9,8 +9,12 @@ dependencies:
   - folium
   - beautifulsoup4
   - urllib3
+  - pyqt
+  - tqdm
+  - shapely
   - pip
   - pip:
-    - shapely
+    - pyqtgraph
     - mordecai
     - docker
+    - spacy
