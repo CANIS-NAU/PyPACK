@@ -10,8 +10,7 @@ def locations_df(csv_file="", sep='\t', directory=False):
 
     Output: Pandas DataFrame w/ locs column
     '''
-
-    def parse_tweet(data, text=False, df_column="Full_Text"):
+    def parse_tweet(data, text=False, df_column="Full_Text", es_port=9200, es_hosts='127.0.0.1'):
         '''
         Input: Pandas DataFrame or str
 
@@ -37,13 +36,14 @@ def locations_df(csv_file="", sep='\t', directory=False):
 
     # Spin up geoparser from mordecai
     try:
-        geo = Geoparser()
-
-    except ConnectionRefusedError:
-        assert "ConnectionRefusedError: Is the Docker image running?"
+        geo = Geoparser(es_port=int(es_port), es_hosts=es_hosts)
 
     except Exception as e:
         print(e)
+        print('Try running locations.start_docker')
+        assert "Geoparse was unable to run, check port and hostname and make sure Docker is running"
+
+
 
     if(directory):
         data_files = os.listdir(csv_file)
