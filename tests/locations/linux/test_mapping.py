@@ -1,6 +1,6 @@
 import pytest
 from libpypack.locations import map_locations
-from libpypack.locations import start_docker.run_docker
+from libpypack.locations.start_docker import run_docker
 from mordecai import Geoparser
 
 import test_data
