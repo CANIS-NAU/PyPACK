@@ -40,8 +40,8 @@ def plot_gdf(gdf):
     # Plot correctly
     fig, ax = plt.subplots(figsize = (75, 75))
     ax.set_aspect('equal')
-    basemap = df.plot(ax=ax, edgecolor='black')
-    return ax, loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=35);
+    basemap = gdf.plot(ax=ax, edgecolor='black')
+    return ax, gdf.plot(ax=ax, marker='o', color='orange', markersize=35);
 
 def lat_lon_to_points(lat_lon_list):
     point_list = []

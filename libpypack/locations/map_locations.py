@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 import os
 
-def locations_df(csv_file="", sep='\t', directory=False, es_port=9200, es_hosts='127.0.0.1'):
+def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1'):
     '''
     Input: Pandas DataFrame
 
@@ -37,7 +37,7 @@ def locations_df(csv_file="", sep='\t', directory=False, es_port=9200, es_hosts=
 
     # Spin up geoparser from mordecai
     try:
-        geo = Geoparser(es_port=int(es_port), es_hosts=es_hosts)
+        geo = Geoparser(es_port=int(port), es_hosts=(host))
 
     except Exception as e:
         print(e)
