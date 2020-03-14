@@ -1,23 +1,26 @@
-# from fbs_runtime.application_context.PyQt5 import ApplicationContext
-# from PyQt5.QtCore import QDateTime, Qt, QTimer
-
 import sys
 import libpypack
 import pandas as pd
+import pyqtgraph as pg
+
 from libpypack.locations import map_locations
 from libpypack.visualization import generate_maps
-import pyqtgraph as pg
+from libpypack.visualization import choropleth
+from libpypack.visualization import heatmap
+
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMenu, QAction,
-                             QLineEdit, QLabel, QPushButton, QComboBox, QFileDialog)
+                             QLineEdit, QLabel, QPushButton, QComboBox,
+                             QFileDialog, QGridLayout, QWidget)
 
 class GraphWindow(QMainWindow):                           # <===
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Plot")
+        self.setWindowTitle("PyPACK GUI")
+        self.resize( 800, 600 )
 
 class MplCanvas(FigureCanvasQTAgg):
 
@@ -31,6 +34,8 @@ class PYPACK_GUI(QMainWindow):
     def __init__(self):
         print('In GUI')
         super().__init__()
+        self.centralwidget = QWidget()
+        self.setCentralWidget(self.centralwidget)
         self.initUI()
 
     def create_directory(self):
@@ -80,6 +85,17 @@ class PYPACK_GUI(QMainWindow):
         else:
             return None
 
+    def openShapeFileNameDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        if fileName:
+            print(fileName)
+            self.shapeLine.setText(fileName)
+            return fileName
+        else:
+            return None
+
     def clickMethod(self, csv_file, output_dir):
         loc_df = map_locations.locations_df(csv_file)
         map_locations.write_csv(output_dir, 'example.csv', loc_df)
@@ -89,41 +105,42 @@ class PYPACK_GUI(QMainWindow):
 
     # Generate the Map
     def overlay(self, csv_file):
-        df = pd.read_csv(csv_file, sep='\t')
         loc_df = map_locations.locations_df(csv_file)
+        loc_gdf = generate_maps.get_loc_gdf(loc_df)
+        text = str(self.typeBox.currentText())
+        if(text == "Heatmap"):
+            heatmap.heatmap(loc_gdf)
+        elif(text == "Choropleth"):
+            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.currentText()))
+        elif(text == "Overlay Locations"):
+            gdf = generate_maps.generate_overlay_gdf(loc_df, filename=str(self.shapeLine.currentText()))
         self.mapWindow = GraphWindow()
         sc = MplCanvas(self.mapWindow, width=5, height=4, dpi=100)
-        gdf = generate_maps.generate_overlay_gdf(loc_df)
         gdf.plot(ax=sc.axes)
         self.mapWindow.setCentralWidget(sc)
         self.mapWindow.show()
         # self.show()
 
     def initUI(self):
+        self.grid = QGridLayout(self.centralwidget)
+        self.grid.setSpacing(15)
 
         # Input Label/Line
         self.inputLabel = QLabel(self)
         self.inputLabel.setText('Input File Path:')
         self.inputLine = QLineEdit(self)
-
         # Header Dropdown Menu
         self.comboBox = QComboBox(self)
-        self.comboBox.move(350, 20)
 
         # Output Label/Line
         self.outputLabel = QLabel(self)
         self.outputLabel.setText('Output File Path:')
         self.outputLine = QLineEdit(self)
 
-        # Input Label/Line Adjustments
-        self.inputLine.move(125, 20)
-        self.inputLine.resize(200, 32)
-        self.inputLabel.move(20, 20)
-
-        # Output Label/Line Adjustments
-        self.outputLine.move(125, 100)
-        self.outputLine.resize(200, 32)
-        self.outputLabel.move(20, 100)
+        # Output Label/Line
+        self.shapeLabel = QLabel(self)
+        self.shapeLabel.setText('Shape File Path:')
+        self.shapeLine = QLineEdit(self)
 
         # Map Types
         self.graphWidget = pg.PlotWidget()
@@ -131,25 +148,21 @@ class PYPACK_GUI(QMainWindow):
         # Browse for Input File Path
         open_file = QPushButton('Browse for Input File', self)
         open_file.clicked.connect(lambda: self.openInputFileNameDialog())
-        open_file.resize(150, 30)
-        open_file.move(120, 60)
+
+        # Browse for ShapeFile Path
+        shape_file = QPushButton('Browse for Shape File', self)
+        shape_file.clicked.connect(lambda: self.openShapeFileNameDialog())
 
         # Browse for Output File Path
         output_file = QPushButton('Browse for Output File', self)
         output_file.clicked.connect(lambda: self.openOutputFileNameDialog())
-        output_file.resize(165, 30)
-        output_file.move(120, 140)
 
         # Parse Locations button
         parse_locs = QPushButton('Parse Locations', self)
         parse_locs.clicked.connect(lambda: self.clickMethod(self.inputLine.text(), self.outputLine.text()))
-        parse_locs.resize(125,30)
-        parse_locs.move(20, 180)
-
-        # load_headers = QPushButton('Load Headers', self)
-        # load_headers.clicked.connect(lambda: self.get_headers(self.inputLine.text()))
-        # load_headers.resize(125,30)
-        # load_headers.move(150, 180)
+        # Gen-Map Button
+        gen_maps = QPushButton('Generate Map', self)
+        gen_maps.clicked.connect(lambda: self.overlay(self.inputLine.text()))
 
         # List of Map Types PyPACK Supports
         map_types = [
@@ -159,21 +172,30 @@ class PYPACK_GUI(QMainWindow):
                 ]
         # Map Drop-Down Box
         self.typeBox = QComboBox(self)
-        self.typeBox.move(150, 210)
-        self.typeBox.resize(100,30)
         self.typeBox.addItems(map_types)
 
-        # Gen-Map Button
-        gen_maps = QPushButton('Generate Map', self)
-        gen_maps.clicked.connect(lambda: self.overlay(self.inputLine.text()))
-        gen_maps.resize(125,30)
-        gen_maps.move(150, 180)
+        # Line Edits
+        self.grid.addWidget(self.inputLabel, 1, 0)
+        self.grid.addWidget(self.inputLine, 1, 1)
+        self.grid.addWidget(self.comboBox, 1, 2)
+        self.grid.addWidget(self.outputLabel, 3, 0)
+        self.grid.addWidget(self.outputLine, 3, 1)
+        self.grid.addWidget(self.shapeLabel, 5, 0)
+        self.grid.addWidget(self.shapeLine, 5, 1)
 
-        # Quit Button
-        quit_app = QPushButton('Quit Application', self)
-        quit_app.clicked.connect(QApplication.quit)
-        quit_app.resize(250,50)
-        quit_app.move(120, 300)
+        # Browsers
+        self.grid.addWidget(open_file, 2, 1)
+        self.grid.addWidget(output_file, 4, 1)
+        self.grid.addWidget(shape_file, 6, 1)
+
+        # Buttons
+        self.grid.addWidget(parse_locs, 7, 0)
+        self.grid.addWidget(self.typeBox, 7, 1)
+        self.grid.addWidget(gen_maps, 7, 2)
+
+        # # Quit Button
+        # quit_app = QPushButton('Quit Application', self)
+        # quit_app.clicked.connect(QApplication.quit)
 
         self.comboBox.activated[str].connect(self.onActivated)
         self.typeBox.activated[str].connect(self.onActivated)
@@ -181,22 +203,6 @@ class PYPACK_GUI(QMainWindow):
         menubar = self.menuBar()
         locMenu = menubar.addMenu('Locations')
         visMenu = menubar.addMenu('Visualization')
-
-        # self.centralwidget = QtWidgets.QWidget(self)
-        # self.centralwidget.setObjectName("centralwidget")
-        # self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        # self.lineEdit.setObjectName("lineEdit")
-        # self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        # self.pushButton.setObjectName("pushButton")
-        # self.verticalLayout = QtWidgets.QVBoxLayout()
-        # self.verticalLayout.setObjectName("verticalLayout")
-        # self.tableView = QtWidgets.QTableView(self.centralwidget)
-        # self.tableView.setObjectName("tableView")
-        # self.verticalLayout.addWidget(self.tableView)
-
-        # layout = QGridLayout()
-        # lineEdit = QLineEdit()
-        # self.addWidget(lineEdit)
 
         self.impMenu = QMenu('Parse Locations')
         self.impAct = QAction('Run Mordecai')
@@ -217,12 +223,14 @@ class PYPACK_GUI(QMainWindow):
         locMenu.addMenu(self.impMenu)
         visMenu.addMenu(self.genMenu)
 
-        self.setGeometry(500, 500, 500, 400)
+        # self.setGeometry(500, 500, 500, 400)
         self.show()
 
 
-if __name__ == '__main__':
-
+def main():
     app = QApplication(sys.argv)
     ex = PYPACK_GUI()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

@@ -24,6 +24,10 @@ def choropleth_map(loc_gdf, shp_path=state_file.__path__[0] + "/states.shp"):
 
     xdf['Count'] = list(map(lambda x: parse_poly(x), xdf['geometry']))
 
+    return xdf
+
+def plot_map(xdf):
+
     fig, ax = plt.subplots(1, 1)
 
     # xdf.plot(column='Count', ax=ax, legend=True)

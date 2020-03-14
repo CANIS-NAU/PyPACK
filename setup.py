@@ -35,6 +35,11 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     packages=find_packages(),
+    entry_points={
+        'gui_scripts': [
+            'pypack_gui=libpypack.gui.gui:main'
+        ],
+    },
     install_requires=['numpy', 'pandas'],
     extras_require={
         'dev': [],

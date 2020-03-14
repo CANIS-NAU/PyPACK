@@ -4,25 +4,25 @@ from tqdm import tqdm
 import numpy as np
 import os
 
-def locations_df(csv_file="", sep='\t', directory=False):
+def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1'):
     '''
     Input: Pandas DataFrame
 
     Output: Pandas DataFrame w/ locs column
     '''
-
-    def parse_tweet(data, text=False, df_column="Full_Text"):
+    def parse_tweet(data, geoparser, text=False, df_column="Full_Text"):
         '''
         Input: Pandas DataFrame or str
 
         Output: List of locations for data provided
         '''
         if(text==False):
-            locations = geo.geoparse(data[df_column])
+            locations = geoparser.geoparse(data[df_column])
         else:
-            locations = geo.geoparse(data)
+            locations = geoparser.geoparse(data)
 
         loc_list = {}
+
         if locations:
             for loc in locations:
                 try:
@@ -37,27 +37,26 @@ def locations_df(csv_file="", sep='\t', directory=False):
 
     # Spin up geoparser from mordecai
     try:
-        geo = Geoparser()
-
-    except ConnectionRefusedError:
-        assert "ConnectionRefusedError: Is the Docker image running?"
+        geo = Geoparser(es_port=int(port), es_hosts=(host))
 
     except Exception as e:
         print(e)
+        print('Try running locations.start_docker')
+        assert "Geoparser was unable to run, check port and hostname and make sure Docker is running"
 
     if(directory):
         data_files = os.listdir(csv_file)
         for file in data_files:
             tweet_df = pd.read_csv(csv_file, sep=sep)
             tqdm.pandas()
-            tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, axis = 1)
+            tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
             tweet_df.to_csv(file[-4:] + "_mord.csv")
         return "Process Complete"
     else:
         # Map locations to text
         tweet_df = pd.read_csv(csv_file, sep=sep)
         tqdm.pandas()
-        tweet_df['locs'] = tweet_df[0:100].progress_apply(parse_tweet, axis = 1)
+        tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
         return tweet_df
 
 def write_csv(output_dir, file, df, sep='\t'):

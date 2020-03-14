@@ -16,8 +16,22 @@ requirements:
   host:
     - python
     - pip
+    - pandas
+    - geopandas
+    - folium
+    - beautifulsoup4
+    - urllib3
+    - pyqt
+    - tqdm
   run:
     - python
+    - pandas
+    - geopandas
+    - folium
+    - beautifulsoup4
+    - urllib3
+    - pyqt
+    - tqdm
 
 test:
   imports:
