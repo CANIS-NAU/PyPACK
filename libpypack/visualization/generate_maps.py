@@ -6,6 +6,7 @@ import geopandas
 import pandas as pd
 import libpypack.examples.states_21basic as state_file
 import matplotlib.pyplot as plt
+import ast
 
 def create_new_df(tweet_df, column_name='locs'):
     loc_name = []
@@ -14,11 +15,12 @@ def create_new_df(tweet_df, column_name='locs'):
 
     for loc in tweet_df[column_name]:
         try:
-            for location, coord in loc.items():
+            for location, coord in ast.literal_eval(loc).items():
                 loc_name.append(location)
                 lats.append(float(coord[0]))
                 lons.append(float(coord[1]))
-        except:
+        except Exception as e:
+            print(e)
             continue
 
     location_df = pd.DataFrame(
@@ -34,14 +36,14 @@ def generate_overlay_gdf(tweet_df, filename=state_file.__path__[0] + "/states.sh
         location_df, geometry=geopandas.points_from_xy(location_df.Longitude, location_df.Latitude))
 
     gdf = geopandas.read_file(filename)
-    return gdf
+    return gdf, loc_gdf
 
-def plot_gdf(gdf):
+def plot_gdf(gdf, loc_gdf):
     # Plot correctly
     fig, ax = plt.subplots(figsize = (75, 75))
     ax.set_aspect('equal')
     basemap = gdf.plot(ax=ax, edgecolor='black')
-    return ax, gdf.plot(ax=ax, marker='o', color='orange', markersize=35);
+    return ax, plt, loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250);
 
 def lat_lon_to_points(lat_lon_list):
     point_list = []
@@ -51,7 +53,6 @@ def lat_lon_to_points(lat_lon_list):
     return point_list
 
 def points_in_shp(points_list, shapefile_gpd):
-
     pnts = geopandas.GeoDataFrame(geometry=points_list, index=range(0, len(points_list)))
     pointInPolys = sjoin(pnts, shapefile_gpd, how='left')
     grouped = pointInPolys.groupby('index_right', as_index=False)

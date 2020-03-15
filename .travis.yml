@@ -42,10 +42,10 @@ install:
 script:
     - if [ "$TRAVIS_OS_NAME" == "linux" ];
         then
-          pytest tests/locations/linux/;
+          pytest tests/linux/;
       elif [ "$TRAVIS_OS_NAME" == "osx"  ];
         then
-          pytest tests/locations/osx/;
+          pytest tests/osx/;
       else
         echo "Invalid OS";
       fi

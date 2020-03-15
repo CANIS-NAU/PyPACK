@@ -12,6 +12,8 @@ dependencies:
   - pyqt
   - tqdm
   - shapely
+  - imageio
+  - matplotlib
   - pip
   - pip:
     - pyqtgraph
