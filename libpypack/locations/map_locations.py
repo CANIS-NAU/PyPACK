@@ -17,9 +17,9 @@ def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1
         Output: List of locations for data provided
         '''
         if(text==False):
-            locations = geoparser.geoparse(data[df_column])
+            locations = geoparser.geoparse(str(data[df_column]))
         else:
-            locations = geoparser.geoparse(data)
+            locations = geoparser.geoparse(str(data))
 
         loc_list = {}
 
