@@ -22,7 +22,7 @@ conda config --add channels conda-forge
 conda create -n pypack
 conda activate pypack
 conda install -c canis-lab pypack
-pip install shapely mordecai docker spacy pyqtgraph
+pip install shapely docker pyqtgraph mordecai
 ```
 
 ### 3. Done! How to use pypack GUI
