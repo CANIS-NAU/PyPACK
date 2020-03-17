@@ -1,7 +1,6 @@
 import pytest
 import libpypack.examples.location_files as loc_file
 import libpypack.time_series.user_info as ts
-from libpypack.locations import map_locations
 import pandas as pd
 
 def test_map_generator():
