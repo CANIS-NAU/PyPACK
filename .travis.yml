@@ -34,7 +34,8 @@ install:
   - source activate test_env
   # Development installation
   - conda install pip setuptools
-  - conda install -c anaconda pytest pytest-cov nbsphinx
+  - conda install -c anaconda pytest pytest-cov
+  - conda install -c conda-forge nbsphinx
   - pip install coveralls travis-sphinx
 
 
