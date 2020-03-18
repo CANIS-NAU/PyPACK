@@ -1,6 +1,5 @@
 from mordecai import Geoparser
 import pandas as pd
-from tqdm import tqdm
 import numpy as np
 import os
 
@@ -48,15 +47,13 @@ def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1
         data_files = os.listdir(csv_file)
         for file in data_files:
             tweet_df = pd.read_csv(csv_file, sep=sep)
-            tqdm.pandas()
-            tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
+            tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
             tweet_df.to_csv(file[-4:] + "_mord.csv")
         return "Process Complete"
     else:
         # Map locations to text
         tweet_df = pd.read_csv(csv_file, sep=sep)
-        tqdm.pandas()
-        tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
+        tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
         return tweet_df
 
 def write_csv(output_dir, file, df, sep='\t'):
