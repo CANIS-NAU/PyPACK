@@ -8,6 +8,7 @@ dependencies:
   - fiona=1.8.7
   - geopandas=0.6.1
   - folium
+  - gdal=2.4.2
   - imageio
   - beautifulsoup4
   - urllib3

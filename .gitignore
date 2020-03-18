@@ -1,4 +1,5 @@
 # Packaging information
+__pycache__/
 libpypack.egg-info/
 dist/
 build/
