@@ -4,6 +4,7 @@ channels:
 dependencies:
   - python=3.7
   - pandas
+  - fiona=1.8.7
   - geopandas=0.6.1
   - folium
   - beautifulsoup4
@@ -11,7 +12,6 @@ dependencies:
   - pyqt
   - tqdm
   - shapely
-  - imageio
   - matplotlib
   - pip
   - pip:
