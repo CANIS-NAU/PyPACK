@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import ast
 from geopandas.tools import sjoin
 from mordecai import Geoparser
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point, Polygong
 
 def create_new_df(tweet_df, column_name='locs'):
     loc_name = []
