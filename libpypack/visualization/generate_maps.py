@@ -1,5 +1,5 @@
 from mordecai import Geoparser
-# from geopandas.tools import sjoin
+from geopandas.tools import sjoin
 from shapely.geometry import Point, Polygon
 
 import geopandas
@@ -52,12 +52,12 @@ def lat_lon_to_points(lat_lon_list):
 
     return point_list
 
-# def points_in_shp(points_list, shapefile_gpd):
-#     pnts = geopandas.GeoDataFrame(geometry=points_list, index=range(0, len(points_list)))
-#     pointInPolys = sjoin(pnts, shapefile_gpd, how='left')
-#     grouped = pointInPolys.groupby('index_right', as_index=False)
-#
-#     return pointInPolys, grouped
+def points_in_shp(points_list, shapefile_gpd):
+    pnts = geopandas.GeoDataFrame(geometry=points_list, index=range(0, len(points_list)))
+    pointInPolys = sjoin(pnts, shapefile_gpd, how='left')
+    grouped = pointInPolys.groupby('index_right', as_index=False)
+
+    return pointInPolys, grouped
 
 def get_loc_gdf(tweet_df, column_name='locs'):
     gdf = create_new_df(tweet_df, column_name=column_name)
