@@ -1,7 +1,6 @@
 name: pypack
 channels:
   - conda-forge
-  - anaconda
 dependencies:
   - python=3.7
   - pandas
@@ -15,9 +14,8 @@ dependencies:
   - pyqt
   - tqdm
   - shapely
-  - matplotlib
   - pip
   - pip:
+    - mordecai
     - pyqtgraph
     - docker
-    - mordecai
