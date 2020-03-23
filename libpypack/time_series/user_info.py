@@ -3,7 +3,6 @@ from libpypack.visualization import generate_maps
 from libpypack.visualization import heatmap
 from libpypack.visualization import choropleth
 import pandas as pd
-import imageio
 import glob, os
 
 def get_user_df(df, user_value, user_column='User_ID', time_column='Timestamp'):
@@ -15,6 +14,8 @@ def get_min_max_date(aggregate_df, time_column='Timestamp'):
     return min_date, max_date
 
 def create_user_gif(user_df, filepath, gif_filename, png_basename='map'):
+    import imageio
+
     images = []
     filenames = []
 

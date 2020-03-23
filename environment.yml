@@ -1,22 +1,19 @@
 name: pypack
 channels:
   - conda-forge
-  - anaconda
 dependencies:
   - python=3.7
+  - beautifulsoup4
+  - urllib3
   - pandas
   - geopandas
   - folium
-  - beautifulsoup4
-  - urllib3
   - pyqt
-  - tqdm
   - shapely
-  - imageio
   - matplotlib
+  - imageio=2.8.0
   - pip
   - pip:
-    - pyqtgraph
     - mordecai
+    - pyqtgraph
     - docker
-    - spacy

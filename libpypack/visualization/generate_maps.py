@@ -1,12 +1,11 @@
-from mordecai import Geoparser
-from geopandas.tools import sjoin
-from shapely.geometry import Point, Polygon
-
 import geopandas
 import pandas as pd
 import libpypack.examples.states_21basic as state_file
 import matplotlib.pyplot as plt
 import ast
+from geopandas.tools import sjoin
+from mordecai import Geoparser
+from shapely.geometry import Point, Polygon
 
 def create_new_df(tweet_df, column_name='locs'):
     loc_name = []

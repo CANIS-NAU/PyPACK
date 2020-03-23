@@ -52,7 +52,7 @@ def parse_web_data(df, **kwargs):
     loc_list = {}
 
     for section in df[kwargs['column_name']]:
-        locations = kwargs['geoparser'].geoparse(section)
+        locations = kwargs['geoparser'].geoparse(str(section))
         if locations:
             for loc in locations:
                 try:
@@ -62,13 +62,13 @@ def parse_web_data(df, **kwargs):
                     continue
     return loc_list
 
-def map_web_locations(web_df, column_name="Paragraphs"):
+def map_web_locations(web_df, column_name="Paragraphs", port=9200, host='127.0.0.1'):
     '''
     Input: Pandas DataFrame
 
     Output: Pandas DataFrame w/ Website Locations Mapped
     '''
-    geo = Geoparser()
+    geo = Geoparser(es_port=int(port), es_host=host)
 
     web_df['Para_Locs'] = web_df.apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
 
