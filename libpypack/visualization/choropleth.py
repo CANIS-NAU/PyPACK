@@ -3,6 +3,7 @@ import libpypack.examples.states_21basic as state_file
 import matplotlib.pyplot as plt
 import geopandas
 from shapely.geometry import Point, Polygon
+import os
 
 def choropleth_map(loc_gdf, shp_path=state_file.__path__[0] + "/states.shp"):
 
@@ -26,7 +27,7 @@ def choropleth_map(loc_gdf, shp_path=state_file.__path__[0] + "/states.shp"):
 
     return xdf
 
-def plot_map(xdf):
+def plot_map(xdf, output_dir=''):
 
     fig, ax = plt.subplots(1, 1)
 
@@ -37,6 +38,6 @@ def plot_map(xdf):
                legend_kwds={'label': "Number of Locations",
                                'orientation': "horizontal"})
 
-    plt.savefig('choropleth.png')
+    plt.savefig(os.path.join(output_dir, "choropleth_map.png"))
 
     return choropleth_plot

@@ -3,18 +3,21 @@ import pandas as pd
 import bs4
 import urllib.request
 import re
+import os
 
-def extract_webpage_locations(web_df):
+def extract_webpage_locations(csv_file, output_dir='', sep="\t", column_name="URLs"):
     '''
     Input: Pandas DataFrame
 
     Output: Pandas DataFrame w/ Website Information Extracted
+
     '''
-    url_df = web_df[web_df['URLs'] != '[]']
+    web_df = pd.read_csv(csv_file, sep=sep)
+    url_df = web_df[web_df[column_name] != '[]']
 
     link_dict = {}
 
-    for link in url_df['URLs']:
+    for link in url_df[column_name]:
 
         try:
             webpage=str(urllib.request.urlopen(link.strip("[]''")).read())
@@ -39,10 +42,10 @@ def extract_webpage_locations(web_df):
             continue
 
     web_df = pd.DataFrame.from_dict(link_dict, orient='index')
-
+    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data.csv'), sep=sep)
     return web_df
 
-def parse_web_data(df, **kwargs):
+def parse_web_data(df, column_name, geoparser):
     '''
     Input: df: Pandas DataFrame
            column_name: Column name to be analyzed
@@ -51,8 +54,8 @@ def parse_web_data(df, **kwargs):
     '''
     loc_list = {}
 
-    for section in df[kwargs['column_name']]:
-        locations = kwargs['geoparser'].geoparse(str(section))
+    for section in df[column_name]:
+        locations = geoparser.geoparse(str(section))
         if locations:
             for loc in locations:
                 try:
@@ -62,7 +65,7 @@ def parse_web_data(df, **kwargs):
                     continue
     return loc_list
 
-def map_web_locations(web_df, column_name="Paragraphs", port=9200, host='127.0.0.1'):
+def map_web_locations(web_df, sep="\t", output_dir='', column_name="Paragraphs", port=9200, host='127.0.0.1'):
     '''
     Input: Pandas DataFrame
 
@@ -70,6 +73,6 @@ def map_web_locations(web_df, column_name="Paragraphs", port=9200, host='127.0.0
     '''
     geo = Geoparser(es_port=int(port), es_host=host)
 
-    web_df['Para_Locs'] = web_df.apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
-
+    web_df['Web_Locs'] = web_df.apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
+    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data_locs.csv'), sep=sep)
     return web_df

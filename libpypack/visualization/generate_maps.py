@@ -3,6 +3,7 @@ import pandas as pd
 import libpypack.examples.states_21basic as state_file
 import matplotlib.pyplot as plt
 import ast
+import os
 from geopandas.tools import sjoin
 from mordecai import Geoparser
 from shapely.geometry import Point, Polygon
@@ -11,10 +12,10 @@ def create_new_df(tweet_df, column_name='locs'):
     loc_name = []
     lats = []
     lons = []
-
+    tweet_df.fillna('NA')
     for loc in tweet_df[column_name]:
         try:
-            for location, coord in ast.literal_eval(loc).items():
+            for location, coord in ast.literal_eval(str(loc)).items():
                 loc_name.append(location)
                 lats.append(float(coord[0]))
                 lons.append(float(coord[1]))
@@ -37,12 +38,14 @@ def generate_overlay_gdf(tweet_df, filename=state_file.__path__[0] + "/states.sh
     gdf = geopandas.read_file(filename)
     return gdf, loc_gdf
 
-def plot_gdf(gdf, loc_gdf):
+def plot_gdf(gdf, loc_gdf, to_png=False, filepath=""):
     # Plot correctly
     fig, ax = plt.subplots(figsize = (75, 75))
     ax.set_aspect('equal')
     basemap = gdf.plot(ax=ax, edgecolor='black')
-    return ax, plt, loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250);
+    loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250)
+    plt.savefig(os.path.join(output_dir, "overlay_map.png"))
+    return loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250)
 
 def lat_lon_to_points(lat_lon_list):
     point_list = []

@@ -4,6 +4,7 @@ import pandas as pd
 import pyqtgraph as pg
 
 from libpypack.locations import map_locations
+from libpypack.locations import webpage_locations
 from libpypack.visualization import generate_maps
 from libpypack.visualization import choropleth
 from libpypack.visualization import heatmap
@@ -32,7 +33,6 @@ class MplCanvas(FigureCanvasQTAgg):
 class PYPACK_GUI(QMainWindow):
 
     def __init__(self):
-        print('In GUI')
         super().__init__()
         self.centralwidget = QWidget()
         self.setCentralWidget(self.centralwidget)
@@ -42,9 +42,9 @@ class PYPACK_GUI(QMainWindow):
         textEdit = QTextEdit()
         textEdit.setPlainText("Enter the file or directory you want to parse")
 
-    def get_headers(self, csv_file):
+    def get_headers(self, csv_file, seperator):
         try:
-            self.comboBox.addItems(list(pd.read_csv(csv_file, nrows=1, sep='\t').columns.values))
+            self.comboBox.addItems(list(pd.read_csv(csv_file, nrows=0, sep=seperator).columns))
         except:
             self.comboBox.addItem("No File Selected")
 
@@ -53,7 +53,6 @@ class PYPACK_GUI(QMainWindow):
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
         if fileName:
-            print(fileName)
             self.inputLine.setText(fileName)
             return fileName
         else:
@@ -62,14 +61,14 @@ class PYPACK_GUI(QMainWindow):
     def openInputFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
         if fileName:
-            print(fileName)
             self.inputLine.setText(fileName)
-            try:
-                self.comboBox.addItems(list(pd.read_csv(fileName, nrows=1, sep='\t').columns.values))
-            except:
-                self.comboBox.addItem("No File Selected")
+            if(str(self.outFileType.currentText()) == 'CSV'):
+                seperator = ","
+            else:
+                seperator = "\t"
+            self.get_headers(fileName, seperator)
             return fileName
         else:
             return None
@@ -77,49 +76,75 @@ class PYPACK_GUI(QMainWindow):
     def openOutputFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            print(fileName)
-            self.outputLine.setText(fileName)
-            return fileName
+        output_dir = QFileDialog.getExistingDirectory(self, 'Browse for Output Directory', options=options)
+        if output_dir:
+            self.outputLine.setText(output_dir)
+            return output_dir
         else:
             return None
 
     def openShapeFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
         if fileName:
-            print(fileName)
             self.shapeLine.setText(fileName)
             return fileName
         else:
             return None
 
-    def clickMethod(self, csv_file, output_dir):
-        loc_df = map_locations.locations_df(csv_file)
-        map_locations.write_csv(output_dir, 'example.csv', loc_df)
+    def clickMethod(self, csv_file, output_dir, filename=None):
+        loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
+                                            df_column=str(self.comboBox.currentText()))
+        return loc_df
 
-    def onActivated(self):
-        print('Item Selected')
+    def scrape_websites(self, csv_file):
+        if(str(self.outFileType.currentText()) == 'CSV'):
+            seperator = ","
+        else:
+            seperator = "\t"
+        web_df = webpage_locations.extract_webpage_locations(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
+                                            column_name=str(self.comboBox.currentText()))
+        mapped_df = webpage_locations.map_web_locations(web_df, sep=seperator, output_dir=str(self.outputLine.text()))
+
+        return web_df
+
+    # Generate the Map
+    def generate_map(self, csv_file):
+        if(str(self.outFileType.currentText()) == 'CSV'):
+            seperator = ","
+        else:
+            seperator = "\t"
+        loc_df = pd.read_csv(csv_file, sep=seperator)
+        loc_gdf = generate_maps.get_loc_gdf(loc_df, column_name=str(self.comboBox.currentText()))
+        text = str(self.typeBox.currentText())
+        if(text == "Heatmap"):
+            hmap = heatmap.heatmap(loc_gdf, output_dir=str(self.outputLine.text()))
+        elif(text == "Choropleth"):
+            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.text()))
+            plot = choropleth.plot_map(gdf, output_dir=str(self.outputLine.text()))
+        elif(text == "Overlay Locations Map"):
+            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, filename=str(self.shapeLine.text()))
+            plot = generate_maps.plot_gdf(gdf, loc_gdf, filepath=str(self.outputLine.text()))
 
     # Generate the Map
     def overlay(self, csv_file):
-        loc_df = map_locations.locations_df(csv_file)
+        if(str(self.outFileType.currentText()) == 'CSV'):
+            seperator = ","
+        else:
+            seperator = "\t"
+        loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
+                                            df_column=str(self.comboBox.currentText()))
         loc_gdf = generate_maps.get_loc_gdf(loc_df)
         text = str(self.typeBox.currentText())
         if(text == "Heatmap"):
-            heatmap.heatmap(loc_gdf)
+            hmap = heatmap.heatmap(loc_gdf, output_dir=str(self.outputLine.text()))
         elif(text == "Choropleth"):
-            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.currentText()))
-        elif(text == "Overlay Locations"):
-            gdf = generate_maps.generate_overlay_gdf(loc_df, filename=str(self.shapeLine.currentText()))
-        self.mapWindow = GraphWindow()
-        sc = MplCanvas(self.mapWindow, width=5, height=4, dpi=100)
-        gdf.plot(ax=sc.axes)
-        self.mapWindow.setCentralWidget(sc)
-        self.mapWindow.show()
-        # self.show()
+            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.text()))
+            plot = choropleth.plot_map(gdf, output_dir=str(self.outputLine.text()))
+        elif(text == "Overlay Locations Map"):
+            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, filename=str(self.shapeLine.text()))
+            plot = generate_maps.plot_gdf(gdf, loc_gdf, filepath=str(self.outputLine.text()))
 
     def initUI(self):
         self.grid = QGridLayout(self.centralwidget)
@@ -130,6 +155,19 @@ class PYPACK_GUI(QMainWindow):
         self.inputLabel.setText('Input File Path:')
         self.inputLine = QLineEdit(self)
         # Header Dropdown Menu
+        file_types = [
+                self.tr('None Selected'),
+                self.tr('CSV'),
+                self.tr('TSV'),
+                ]
+
+        self.outFileLabel = QLabel(self)
+        self.outFileLabel.setText('Output File Type:')
+        self.outFileType = QComboBox(self)
+        self.outFileType.addItems(file_types)
+
+        self.comboBoxLabel = QLabel(self)
+        self.comboBoxLabel.setText('Column to Analyze:')
         self.comboBox = QComboBox(self)
 
         # Output Label/Line
@@ -154,30 +192,43 @@ class PYPACK_GUI(QMainWindow):
         shape_file.clicked.connect(lambda: self.openShapeFileNameDialog())
 
         # Browse for Output File Path
-        output_file = QPushButton('Browse for Output File', self)
+        output_file = QPushButton('Browse for Output Directory', self)
         output_file.clicked.connect(lambda: self.openOutputFileNameDialog())
 
         # Parse Locations button
-        parse_locs = QPushButton('Parse Locations', self)
+        parse_locs = QPushButton('Parse Locations Only', self)
         parse_locs.clicked.connect(lambda: self.clickMethod(self.inputLine.text(), self.outputLine.text()))
         # Gen-Map Button
-        gen_maps = QPushButton('Generate Map', self)
+        gen_maps = QPushButton('Generate Map and Parse Locations', self)
         gen_maps.clicked.connect(lambda: self.overlay(self.inputLine.text()))
+
+        # Websites Location
+        websites = QPushButton('Scrape Websites', self)
+        websites.clicked.connect(lambda: self.scrape_websites(self.inputLine.text()))
+
+        # Websites Location
+        gen_map = QPushButton('Generate Map Only', self)
+        gen_map.clicked.connect(lambda: self.generate_map(self.inputLine.text()))
 
         # List of Map Types PyPACK Supports
         map_types = [
                 self.tr('Heatmap'),
                 self.tr('Choropleth'),
-                self.tr('Overlay Locations'),
+                self.tr('Overlay Locations Map'),
                 ]
         # Map Drop-Down Box
+        self.mapTypeLabel = QLabel(self)
+        self.mapTypeLabel.setText('Map Type:')
         self.typeBox = QComboBox(self)
         self.typeBox.addItems(map_types)
 
         # Line Edits
         self.grid.addWidget(self.inputLabel, 1, 0)
         self.grid.addWidget(self.inputLine, 1, 1)
-        self.grid.addWidget(self.comboBox, 1, 2)
+        self.grid.addWidget(self.outFileLabel, 1, 2)
+        self.grid.addWidget(self.outFileType, 1, 3)
+        self.grid.addWidget(self.comboBoxLabel, 2, 2)
+        self.grid.addWidget(self.comboBox, 2, 3)
         self.grid.addWidget(self.outputLabel, 3, 0)
         self.grid.addWidget(self.outputLine, 3, 1)
         self.grid.addWidget(self.shapeLabel, 5, 0)
@@ -189,39 +240,12 @@ class PYPACK_GUI(QMainWindow):
         self.grid.addWidget(shape_file, 6, 1)
 
         # Buttons
-        self.grid.addWidget(parse_locs, 7, 0)
+        self.grid.addWidget(parse_locs, 8, 2)
+        self.grid.addWidget(self.mapTypeLabel, 7, 0)
         self.grid.addWidget(self.typeBox, 7, 1)
         self.grid.addWidget(gen_maps, 7, 2)
-
-        # # Quit Button
-        # quit_app = QPushButton('Quit Application', self)
-        # quit_app.clicked.connect(QApplication.quit)
-
-        self.comboBox.activated[str].connect(self.onActivated)
-        self.typeBox.activated[str].connect(self.onActivated)
-
-        menubar = self.menuBar()
-        locMenu = menubar.addMenu('Locations')
-        visMenu = menubar.addMenu('Visualization')
-
-        self.impMenu = QMenu('Parse Locations')
-        self.impAct = QAction('Run Mordecai')
-        self.impMenu.addAction(self.impAct)
-        self.impAct.triggered.connect(lambda: self.clickMethod(self.inputLine.text(), self.outputLine.text()))
-
-        self.genMenu = QMenu('Generate Visuals')
-        self.heatAct = QAction('Heatmap')
-        self.choroAct = QAction('Choropleth')
-
-        self.genMenu.addAction(self.choroAct)
-        self.genMenu.addAction(self.heatAct)
-
-        # self.choroAct.triggered.connect(self.print_something)
-        # self.heatAct.triggered.connect(self.print_something)
-
-        # Add the Menus
-        locMenu.addMenu(self.impMenu)
-        visMenu.addMenu(self.genMenu)
+        self.grid.addWidget(websites, 7, 3)
+        self.grid.addWidget(gen_map, 8, 3)
 
         # self.setGeometry(500, 500, 500, 400)
         self.show()
