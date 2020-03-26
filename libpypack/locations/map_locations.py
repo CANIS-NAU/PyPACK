@@ -3,13 +3,13 @@ import pandas as pd
 import numpy as np
 import os
 
-def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1'):
+def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1', output_filename='parsed_locs.csv', output_dir='', df_column="Full_Text"):
     '''
     Input: Pandas DataFrame
 
     Output: Pandas DataFrame w/ locs column
     '''
-    def parse_tweet(data, geoparser, text=False, df_column="Full_Text"):
+    def parse_tweet(data, geoparser, text=False, USA_Only=True, df_column=df_column):
         '''
         Input: Pandas DataFrame or str
 
@@ -25,7 +25,10 @@ def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1
         if locations:
             for loc in locations:
                 try:
-                    if(loc['country_predicted'] == "USA"):
+                    if(USA_Only):
+                        if(loc['country_predicted'] == "USA"):
+                            loc_list[loc['geo']['place_name']] = (loc['geo']['lat'], loc['geo']['lon'])
+                    else:
                         loc_list[loc['geo']['place_name']] = (loc['geo']['lat'], loc['geo']['lon'])
                 except:
                     continue
@@ -48,14 +51,11 @@ def locations_df(csv_file, sep='\t', directory=False, port=9200, host='127.0.0.1
         for file in data_files:
             tweet_df = pd.read_csv(csv_file, sep=sep)
             tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
-            tweet_df.to_csv(file[-4:] + "_mord.csv")
+            tweet_df.to_csv(os.path.join(output_dir, file[-4:] + "_mord.csv") + file[-4:], sep='\t')
         return "Process Complete"
     else:
         # Map locations to text
         tweet_df = pd.read_csv(csv_file, sep=sep)
         tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
+        tweet_df.to_csv(os.path.join(output_dir, output_filename), sep='\t')
         return tweet_df
-
-def write_csv(output_dir, file, df, sep='\t'):
-    df.to_csv(output_dir + file, sep=sep)
-    return 0

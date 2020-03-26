@@ -1,4 +1,4 @@
-{% set version = "1.0.2" %}
+{% set version = "1.0.4" %}
 
 package:
   name: pypack
@@ -14,24 +14,27 @@ build:
 
 requirements:
   host:
-    - python
-    - pip
+    - python=3.7
+    - beautifulsoup4
+    - urllib3
     - pandas
     - geopandas
     - folium
-    - beautifulsoup4
-    - urllib3
     - pyqt
-    - tqdm
+    - shapely
+    - matplotlib
+    - imageio=2.8.0
   run:
-    - python
+    - python=3.7
+    - beautifulsoup4
+    - urllib3
     - pandas
     - geopandas
     - folium
-    - beautifulsoup4
-    - urllib3
     - pyqt
-    - tqdm
+    - shapely
+    - matplotlib
+    - imageio=2.8.0
 
 test:
   imports:
