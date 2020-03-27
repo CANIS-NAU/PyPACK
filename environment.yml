@@ -12,6 +12,7 @@ dependencies:
   - shapely
   - matplotlib
   - imageio=2.8.0
+  - descartes
   - pip
   - pip:
     - mordecai
