@@ -35,7 +35,7 @@ def plot_map(xdf, output_dir='', cmap='magma'):
     choropleth_plot = xdf.plot(column='Count',
                ax=ax,
                legend=True,
-               cmap=cmap
+               cmap=cmap,
                legend_kwds={'label': "Number of Locations",
                                'orientation': "horizontal"})
 
