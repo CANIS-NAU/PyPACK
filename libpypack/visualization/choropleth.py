@@ -27,7 +27,7 @@ def choropleth_map(loc_gdf, shp_path=state_file.__path__[0] + "/states.shp"):
 
     return xdf
 
-def plot_map(xdf, output_dir=''):
+def plot_map(xdf, output_dir='', cmap='magma'):
 
     fig, ax = plt.subplots(1, 1)
 
@@ -35,6 +35,7 @@ def plot_map(xdf, output_dir=''):
     choropleth_plot = xdf.plot(column='Count',
                ax=ax,
                legend=True,
+               cmap=cmap
                legend_kwds={'label': "Number of Locations",
                                'orientation': "horizontal"})
 

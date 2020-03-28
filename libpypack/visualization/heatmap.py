@@ -29,7 +29,6 @@ def heatmap(loc_gdf, column="Location Extracted", heat_value=None, normalize_dat
         max_amount = float(locations.max())
 
         hmap = folium.Map(zoom_start=7)
-        print(list(zip(loc_gdf.Latitude.values, loc_gdf.Longitude.values, locations)))
         hm_wides = HeatMap( list(zip(loc_gdf.Latitude.values, loc_gdf.Longitude.values)),
                            min_opacity=0.2,
                            max_val=max_amount,
