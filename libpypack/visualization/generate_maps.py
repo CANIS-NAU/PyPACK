@@ -15,10 +15,11 @@ def create_new_df(tweet_df, column_name='locs'):
     tweet_df.fillna('NA')
     for loc in tweet_df[column_name]:
         try:
-            for location, coord in ast.literal_eval(str(loc)).items():
-                loc_name.append(location)
-                lats.append(float(coord[0]))
-                lons.append(float(coord[1]))
+            if(loc != "NA"):
+                for location, coord in ast.literal_eval(str(loc)).items():
+                    loc_name.append(location)
+                    lats.append(float(coord[0]))
+                    lons.append(float(coord[1]))
         except Exception as e:
             print(e)
             continue
@@ -38,14 +39,14 @@ def generate_overlay_gdf(tweet_df, shp_path=state_file.__path__[0] + "/states.sh
     gdf = geopandas.read_file(shp_path)
     return gdf, loc_gdf
 
-def plot_gdf(gdf, loc_gdf, output_dir=""):
+def plot_gdf(gdf, loc_gdf, output_dir="", markersize=100, markercolor='orange'):
     # Plot correctly
     fig, ax = plt.subplots(figsize = (75, 75))
     ax.set_aspect('equal')
     basemap = gdf.plot(ax=ax, edgecolor='black')
-    loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250)
+    loc_gdf.plot(ax=ax, marker='o', color=markercolor, markersize=markersize)
     plt.savefig(os.path.join(output_dir, "overlay_map.png"))
-    return loc_gdf.plot(ax=ax, marker='o', color='orange', markersize=250)
+    return loc_gdf.plot(ax=ax, marker='o', color=markercolor, markersize=markersize)
 
 def lat_lon_to_points(lat_lon_list):
     point_list = []
