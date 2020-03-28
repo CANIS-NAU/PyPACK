@@ -42,7 +42,7 @@ def extract_webpage_locations(csv_file, output_dir='', sep="\t", column_name="UR
             continue
 
     web_df = pd.DataFrame.from_dict(link_dict, orient='index')
-    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data.csv'), sep=sep)
+    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data.csv'), sep=sep, index=False)
     return web_df
 
 def parse_web_data(df, column_name, geoparser):
@@ -74,5 +74,5 @@ def map_web_locations(web_df, sep="\t", output_dir='', column_name="Paragraphs",
     geo = Geoparser(es_port=int(port), es_host=host)
 
     web_df['Web_Locs'] = web_df.apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
-    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data_locs.csv'), sep=sep)
+    web_df.to_csv(os.path.join(output_dir, 'scraped_website_data_locs.csv'), sep=sep, index=False)
     return web_df
