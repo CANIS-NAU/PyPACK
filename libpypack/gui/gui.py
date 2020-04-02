@@ -8,7 +8,7 @@ from libpypack.locations import webpage_locations
 from libpypack.visualization import generate_maps
 from libpypack.visualization import choropleth
 from libpypack.visualization import heatmap
-
+from libpypack.locations.start_docker import run_docker
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -36,6 +36,8 @@ class PYPACK_GUI(QMainWindow):
         super().__init__()
         self.centralwidget = QWidget()
         self.setCentralWidget(self.centralwidget)
+        # Run docker
+        run_docker()
         self.initUI()
 
     def create_directory(self):
