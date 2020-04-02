@@ -1,4 +1,4 @@
-{% set version = "1.1.0" %}
+{% set version = "1.1.1" %}
 
 package:
   name: pypack
@@ -21,6 +21,7 @@ requirements:
     - geopandas
     - folium
     - pyqt
+    - tqdm
     - shapely
     - matplotlib
     - imageio=2.8.0
@@ -33,6 +34,7 @@ requirements:
     - geopandas
     - folium
     - pyqt
+    - tqdm
     - shapely
     - matplotlib
     - imageio=2.8.0
