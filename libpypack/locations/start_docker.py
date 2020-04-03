@@ -22,14 +22,14 @@ def run_docker():
         my_tar.close()
 
     # Using the Docker API, create a client to interact with
-    print("-----Starting Docker-----")
+    print("-----Starting Docker-----", flush=True)
     client = docker.from_env()
-    print("-----Docker Started-----")
+    print("-----Docker Started-----", flush=True)
 
 
     # If the container is in existence, grab it
     try:
-        print("Trying container")
+        print("-----Trying to download ontainer-----")
         elastic_container = client.containers.get("pypack_elastic")
 
         # If running, stop it and remove it.
@@ -42,8 +42,11 @@ def run_docker():
         print(e)
 
     # Pull the new image
-    print('Pulling container')
-    client.images.pull('elasticsearch:5.5.2')
+    try:
+        print('Pulling container')
+        client.images.pull('elasticsearch:5.5.2')
+    except:
+        print("Image could not be pulled, run 'docker pull elasticsearch:5.5.2'")
 
     # Bind the geonames_index in the examples directory, to the Docker container
     volumes = {examples.__path__[0] + "/geonames_index/":
