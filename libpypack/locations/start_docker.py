@@ -35,8 +35,7 @@ def run_docker():
         # If running, stop it and remove it.
         # NOTE: If the container is corrupt it messes up.
         if(elastic_container.status == "running"):
-            elastic_container.stop()
-            elastic_container.remove()
+            return 0
 
     except Exception as e:
         print(e)
@@ -55,5 +54,8 @@ def run_docker():
     ports = {'9200/tcp': ('127.0.0.1', 9200)}
 
     # Run the Docker container to interact with
-    client.containers.run("elasticsearch:5.5.2", ports=ports, volumes=volumes, name="pypack_elastic", detach=True)
-    time.sleep(30)   # Delays for 5 seconds. You can also use a float value.
+    try:
+        client.containers.run("elasticsearch:5.5.2", ports=ports, volumes=volumes, name="pypack_elastic", detach=True)
+        time.sleep(30)   # Delays for 5 seconds. You can also use a float value.
+    except:
+        return "An error occured while running the container. Either it is already running, or you need to have 'root' access."
