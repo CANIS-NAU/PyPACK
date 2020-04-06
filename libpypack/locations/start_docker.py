@@ -29,7 +29,7 @@ def run_docker():
 
     # If the container is in existence, grab it
     try:
-        print("-----Trying to download ontainer-----")
+        print("-----Downloading Container-----")
         elastic_container = client.containers.get("pypack_elastic")
 
         # If running, stop it and remove it.
@@ -45,7 +45,7 @@ def run_docker():
         print('Pulling container')
         client.images.pull('elasticsearch:5.5.2')
     except:
-        print("Image could not be pulled, run 'docker pull elasticsearch:5.5.2'")
+        print("Image could not be downloaded, run 'docker pull elasticsearch:5.5.2' from a terminal.", flush=True)
 
     # Bind the geonames_index in the examples directory, to the Docker container
     volumes = {examples.__path__[0] + "/geonames_index/":
@@ -58,4 +58,5 @@ def run_docker():
         client.containers.run("elasticsearch:5.5.2", ports=ports, volumes=volumes, name="pypack_elastic", detach=True)
         time.sleep(30)   # Delays for 5 seconds. You can also use a float value.
     except:
-        return "An error occured while running the container. Either it is already running, or you need to have 'root' access."
+        print("An error occured while running the container. Either it is already running, or you need to have 'root' access.", flush=True)
+        return 1
