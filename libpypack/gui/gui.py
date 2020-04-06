@@ -145,8 +145,8 @@ class PYPACK_GUI(QMainWindow):
             gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.text()))
             plot = choropleth.plot_map(gdf, output_dir=str(self.outputLine.text()))
         elif(text == "Overlay Locations Map"):
-            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, filename=str(self.shapeLine.text()))
-            plot = generate_maps.plot_gdf(gdf, loc_gdf, filepath=str(self.outputLine.text()))
+            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(self.shapeLine.text()))
+            plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(self.outputLine.text()))
 
     def initUI(self):
         self.grid = QGridLayout(self.centralwidget)
