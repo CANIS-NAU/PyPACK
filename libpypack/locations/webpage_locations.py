@@ -7,9 +7,25 @@ import os
 
 def extract_webpage_locations(csv_file, output_dir='', sep="\t", column_name="URLs"):
     '''
-    Input: Pandas DataFrame
+    Given a CSV file this will parse each row of the column in 'column_name'
+    and return the Headers / Paragraphs which is parsed by BeautifulSoup.
 
-    Output: Pandas DataFrame w/ Website Information Extracted
+    Parameters
+    ----------
+    csv_file: str
+
+    output_dir: str
+
+    sep: str
+            Examples: "\t" (tab)
+
+    column_name: str
+            Examples: 'URLs'
+
+    Returns
+    -------
+    : dataframe
+      Pandas DataFrame with associated web information
 
     '''
     web_df = pd.read_csv(csv_file, sep=sep)
@@ -47,10 +63,22 @@ def extract_webpage_locations(csv_file, output_dir='', sep="\t", column_name="UR
 
 def parse_web_data(df, column_name, geoparser):
     '''
-    Input: df: Pandas DataFrame
-           column_name: Column name to be analyzed
+    Given a CSV file this will parse each row of the column in 'column_name'
+    and return the Headers / Paragraphs which is parsed by BeautifulSoup.
 
-    Output: Pandas DataFrame w/ Website Information Extracted
+    Parameters
+    ----------
+    df: Pandas DataFrame
+
+    column_name: str
+
+    geoparser: Mordecai instance
+
+    Returns
+    -------
+    : list
+      List of parsed locations
+
     '''
     loc_list = {}
 
@@ -67,9 +95,33 @@ def parse_web_data(df, column_name, geoparser):
 
 def map_web_locations(web_df, sep="\t", output_dir='', column_name="Paragraphs", port=9200, host='127.0.0.1'):
     '''
-    Input: Pandas DataFrame
+    Given a DataFrame generated above, this outputs a file named 'scraped_website_data_locs.csv'
+    and returns DataFrame with associated information which can be used to generate maps.
 
-    Output: Pandas DataFrame w/ Website Locations Mapped
+    Parameters
+    ----------
+    web_df: Pandas DataFrame
+
+    sep: str
+            The delimeter for outputted CSV data.
+
+    output_dir: str
+            Output directory of files generated.
+
+    column_name: str
+            The column name to parse for locations.
+
+    port: int
+            Port to run location extractor.
+
+    host: str
+            The hostname to run location extractor.
+
+    Returns
+    -------
+    : Pandas DataFrame
+      Pandas DataFrame with 'Web_Locs' as a column, which contain parsed website locations.
+
     '''
     geo = Geoparser(es_port=int(port), es_host=host)
 

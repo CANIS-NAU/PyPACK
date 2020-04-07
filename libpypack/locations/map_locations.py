@@ -5,16 +5,76 @@ import os
 
 def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1', output_filename='parsed_locs.csv', output_dir='', df_column="Full_Text"):
     '''
-    Input: Pandas DataFrame
+    Pass in a CSV file and recieve another CSV file with locations parsed
+    from whatever column is selected for 'column_name'.
 
-    Output: Pandas DataFrame w/ locs column
+    Parameters
+    ----------
+    csv_file: float / str
+              [-90 90] in decimal or DMS (degrees:minutes:seconds)
+              Examples: 38.26 or 38:15:36N
+
+    sep: float / str
+               [-180 180] in decimal or DMS (degrees:minutes:seconds)
+               Examples: -77.51 or 77:30:36W
+
+    directory: boolean
+            Examples: True / False
+
+    port: int
+            Examples: 8888, Default: 9200
+
+    host: str
+            Examples: 127.0.0.1
+
+    port: str
+            Examples: 'parsed_locs.csv'
+
+    output_dir: str
+            Examples: '/User/Desktop'
+
+    df_column: str
+            Examples: 'json' / 'jsonp' / 'xml'
+
+
+    Returns
+    -------
+    : dataframe
+      Pandas DataFrame with the column 'locs'
+
     '''
-    def parse_tweet(data, geoparser, text=False, USA_Only=True, df_column=df_column):
-        '''
-        Input: Pandas DataFrame or str
 
-        Output: List of locations for data provided
-        '''
+    def parse_tweet(data, geoparser, text=False, USA_Only=True, df_column=df_column):
+        """
+
+        A Helper function to locations_df, this function does the parsing of locations
+        and outputs the necessary columns/files.
+
+        Parameters
+        ----------
+        data: str
+                  Text data to be parsed for locations.
+                  Examples: "Flagstaff is a city in Arizona."
+
+        geoparser: function references
+                   Mordecai Geoparser
+                   Examples: geo = Geoparser(es_port=int(port), es_hosts=(host))
+
+        text: boolean
+                Examples: True / False
+
+        USA_Only: boolean
+                Examples: True / False
+
+        df_column: str
+                Examples: 127.0.0.1
+
+        Returns
+        -------
+        : list
+          List of locations parsed from a column in the CSV passed in.
+
+        """
         if(text==False):
             locations = geoparser.geoparse(str(data[df_column]))
         else:

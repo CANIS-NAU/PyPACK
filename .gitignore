@@ -14,3 +14,8 @@ libpypack/examples/geonames_index/
 
 # MAC
 .DS_Store
+
+# Docs
+_build
+_static
+_templates

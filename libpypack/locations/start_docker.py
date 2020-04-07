@@ -8,6 +8,17 @@ import time
 
 
 def run_docker():
+    """
+
+    Docker is needed for Mordecai to work, this function starts Docker automatically,
+    and configues the Docker image appropriately.
+
+    Returns
+    -------
+    : Running Docker Image.
+      N/A
+
+    """
     # Check if the geonames_index has been downloaded
     if not os.path.isdir(examples.__path__[0] + '/geonames_index'):
 
