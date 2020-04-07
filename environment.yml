@@ -9,6 +9,7 @@ dependencies:
   - geopandas
   - folium
   - pyqt
+  - tqdm
   - shapely
   - matplotlib
   - imageio=2.8.0

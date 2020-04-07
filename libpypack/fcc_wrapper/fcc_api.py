@@ -26,6 +26,7 @@ def area_query(lat, lon, format='json'):
       County FIPS, BoundingBox, State FIPS
 
     """
+
     url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&showall=true&format={}".format(float(lat), float(lon), str(format))
     r = requests.get(url)
     return r.text
@@ -62,7 +63,7 @@ def block_query(lat, lon, censusYear='2019', format='json', showall=False):
     -------
     : str
       County FIPS, BoundingBox, State FIPS
-      
+
     """
 
     url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&censusYear={}&showall={}&format={}".format(int(lat), int(lon), censusYear, str(showall), str(format))

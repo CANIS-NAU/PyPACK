@@ -5,18 +5,13 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
-   libpypack.examples
-   libpypack.fcc_wrapper
-   libpypack.gui
-   libpypack.locations
-   libpypack.visualization
+    libpypack.locations
 
 Module contents
 ---------------
 
 .. automodule:: libpypack
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
