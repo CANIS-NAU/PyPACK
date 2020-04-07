@@ -3,10 +3,9 @@ import json
 
 def area_query(lat, lon, format='json'):
     """
-    Name: Block API
-
     From: https://geo.fcc.gov/api/census/
-    Why: Get census block, county, state, and market area information based on latitude/longitude input.
+
+    Get census block, county, state, and market area information based on latitude/longitude input.
     Parameters
     ----------
     Latitude: float / str
@@ -23,8 +22,9 @@ def area_query(lat, lon, format='json'):
 
     Returns
     -------
-    : County FIPS, BoundingBox, State FIPS
-      Format type response
+    : str
+      County FIPS, BoundingBox, State FIPS
+
     """
     url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&showall=true&format={}".format(float(lat), float(lon), str(format))
     r = requests.get(url)
@@ -32,10 +32,10 @@ def area_query(lat, lon, format='json'):
 
 def block_query(lat, lon, censusYear='2019', format='json', showall=False):
     """
-    Name: Block API
-
     From: https://geo.fcc.gov/api/census/
-    Why: Get census block, county, and state FIPS based on latitude/longitude input.
+
+    Get census block, county, and state FIPS based on latitude/longitude input.
+
     Parameters
     ----------
     Latitude: float / str
@@ -60,8 +60,9 @@ def block_query(lat, lon, censusYear='2019', format='json', showall=False):
 
     Returns
     -------
-    : County FIPS, BoundingBox, State FIPS
-      Format type response
+    : str
+      County FIPS, BoundingBox, State FIPS
+      
     """
 
     url = "https://geo.fcc.gov/api/census/block/find?latitude={}&longitude={}&censusYear={}&showall={}&format={}".format(int(lat), int(lon), censusYear, str(showall), str(format))
