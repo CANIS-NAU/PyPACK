@@ -118,4 +118,5 @@ def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1
         tweet_df = pd.read_csv(csv_file, sep=sep)
         tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
         tweet_df.to_csv(os.path.join(output_dir, output_filename), sep='\t', index=False)
+        print("Succesfully Parsed: {}".format(csv_file))
         return tweet_df
