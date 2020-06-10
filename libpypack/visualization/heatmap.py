@@ -34,7 +34,7 @@ def heatmap(loc_gdf, column="Location Extracted", normalize_data=False, output_n
     max_amount = float(locations.max())
 
     try:
-        locations = loc_gdf['Location Extracted'].value_counts().values
+        locations = loc_gdf[column].value_counts().values
         normalized = (locations-locations.min())/(locations.max()-locations.min())
 
         hmap = folium.Map(zoom_start=7)
