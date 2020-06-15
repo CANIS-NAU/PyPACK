@@ -9,7 +9,7 @@ import time
 import sys
 import requests
 
-
+# Download function and progress bar
 def download(url, filename):
     with open(filename, 'wb') as f:
         response = requests.get(url, stream=True, allow_redirects=True)
@@ -54,13 +54,6 @@ def run_docker():
         url = 'https://s3.amazonaws.com/ahalterman-geo/geonames_index.tar.gz'
         print("-----Downloading geonames_index-----")
         download(url, 'geonames_index.tar.gz')
-        # r = requests.get(url, allow_redirects=True)
-        # open('geonames_index.tar.gz', 'wb').write(r.content)
-        #
-        # # Extract the tar file
-        # my_tar = tarfile.open('geonames_index.tar.gz')
-        # my_tar.extractall(examples.__path__[0]) # specify which folder to extract to
-        # my_tar.close()
 
     # Using the Docker API, create a client to interact with
     print("-----Starting Docker-----", flush=True)
