@@ -46,6 +46,7 @@ class PYPACK_GUI(QMainWindow):
 
     def get_headers(self, csv_file, seperator):
         try:
+            self.comboBox.clear()
             self.comboBox.addItems(list(pd.read_csv(csv_file, nrows=0, sep=seperator).columns))
         except:
             self.comboBox.addItem("No File Selected")
@@ -164,7 +165,7 @@ class PYPACK_GUI(QMainWindow):
                 ]
 
         self.outFileLabel = QLabel(self)
-        self.outFileLabel.setText('Output File Type:')
+        self.outFileLabel.setText('Input File Type:')
         self.outFileType = QComboBox(self)
         self.outFileType.addItems(file_types)
 
@@ -216,7 +217,7 @@ class PYPACK_GUI(QMainWindow):
         map_types = [
                 self.tr('Heatmap'),
                 self.tr('Choropleth'),
-                self.tr('Overlay Locations Map'),
+                self.tr('Map of Locations Overlay onto Shapefile'),
                 ]
         # Map Drop-Down Box
         self.mapTypeLabel = QLabel(self)

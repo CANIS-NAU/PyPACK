@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1', output_filename='parsed_locs.csv', output_dir='', df_column="Full_Text"):
+def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1', output_filename='pypack_parsed_locations.csv', output_dir='', df_column="Full_Text"):
     '''
     Pass in a CSV file and recieve another CSV file with locations parsed
     from whatever column is selected for 'column_name'.
@@ -28,7 +28,7 @@ def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1
             Examples: 127.0.0.1
 
     port: str
-            Examples: 'parsed_locs.csv'
+            Examples: 'pypack_parsed_locations.csv'
 
     output_dir: str
             Examples: '/User/Desktop'
@@ -44,7 +44,7 @@ def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1
 
     '''
 
-    def parse_tweet(data, geoparser, text=False, USA_Only=True, df_column=df_column):
+    def parse_tweet(data, geoparser, text=False, USA_Only=False, df_column=df_column):
         """
 
         A Helper function to locations_df, this function does the parsing of locations
