@@ -123,8 +123,10 @@ def map_web_locations(web_df, sep="\t", output_dir='', column_name="Paragraphs",
       Pandas DataFrame with 'Web_Locs' as a column, which contain parsed website locations.
 
     '''
+    tqdm.pandas()
+
     geo = Geoparser(es_port=int(port), es_host=host)
 
-    web_df['Web_Locs'] = web_df.apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
+    web_df['Web_Locs'] = web_df.progress_apply(parse_web_data, column_name=column_name, geoparser=geo, axis=1)
     web_df.to_csv(os.path.join(output_dir, 'scraped_website_data_locs.csv'), sep=sep, index=False)
     return web_df

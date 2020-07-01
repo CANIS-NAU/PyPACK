@@ -2,6 +2,7 @@ from mordecai import Geoparser
 import pandas as pd
 import numpy as np
 import os
+from tqdm import tqdm
 
 def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1', output_filename='pypack_parsed_locations.csv', output_dir='', df_column="Full_Text"):
     '''
@@ -106,17 +107,20 @@ def locations_df(csv_file, sep="\t", directory=False, port=9200, host='127.0.0.1
         print('Try running locations.start_docker')
         assert "Geoparser was unable to run, check port and hostname and make sure Docker is running"
 
+    # Making a progress bar
+    tqdm.pandas()
+
     if(directory):
         data_files = os.listdir(csv_file)
         for file in data_files:
             tweet_df = pd.read_csv(csv_file, sep=sep)
-            tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
+            tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
             tweet_df.to_csv(os.path.join(output_dir, file[-4:] + "_locations.csv") + file[-4:], sep='\t', index=False)
         return "Process Complete"
     else:
         # Map locations to text
         tweet_df = pd.read_csv(csv_file, sep=sep)
-        tweet_df['locs'] = tweet_df.apply(parse_tweet, geoparser=geo, axis = 1)
+        tweet_df['locs'] = tweet_df.progress_apply(parse_tweet, geoparser=geo, axis = 1)
         tweet_df.to_csv(os.path.join(output_dir, output_filename), sep='\t', index=False)
         print("Succesfully Parsed: {}".format(csv_file))
         return tweet_df
