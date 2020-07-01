@@ -90,10 +90,10 @@ def generate_map(csv_file):
     if(text == "Heatmap"):
         hmap = heatmap.heatmap(loc_gdf, output_dir=str(p1.outputLine.text()))
     elif(text == "Choropleth"):
-        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p1.shapeLine.text()))
+        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p2.shapeLine.text()))
         plot = choropleth.plot_map(gdf, output_dir=str(p1.outputLine.text()))
-    elif(text == "Overlay Locations Map"):
-        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p1.shapeLine.text()))
+    elif(text == "Map of Locations Overlay onto Shapefile"):
+        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p2.shapeLine.text()))
         plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(p1.outputLine.text()))
 
 # Generate the Map
@@ -109,10 +109,10 @@ def overlay(csv_file):
     if(text == "Heatmap"):
         hmap = heatmap.heatmap(loc_gdf, output_dir=str(p1.outputLine.text()))
     elif(text == "Choropleth"):
-        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p1.shapeLine.text()))
+        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p2.shapeLine.text()))
         plot = choropleth.plot_map(gdf, output_dir=str(p1.outputLine.text()))
-    elif(text == "Overlay Locations Map"):
-        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p1.shapeLine.text()))
+    elif(text == "Map of Locations Overlay onto Shapefile"):
+        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p2.shapeLine.text()))
         plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(p1.outputLine.text()))
 
 app = QApplication([])
@@ -158,13 +158,13 @@ p2 = QWizardPage()
 layout = QtWidgets.QVBoxLayout()
 p2.setTitle('PyPACK Column Selection')
 p2.columnLabel = QLabel("Please Choose a Column to Analyze")
-p2.columnBox = QComboBox(p1)
+p2.columnBox = QComboBox(p2)
 
 # Browse for ShapeFile Path
 p2.shapeLabel = QLabel("***OPTIONAL*** (Browse Only if Generating an Overlay/Choropleth Map)")
 p2.shapeLine = QLineEdit(p2)
 p2.shape_file = QPushButton('Browse for Shape File', p2)
-p2.shape_file.clicked.connect(lambda: openShapeFileNameDialog())
+p2.shape_file.clicked.connect(lambda: openShapeFileNameDialog(p2))
 
 # List of Map Types PyPACK Supports
 map_types = [

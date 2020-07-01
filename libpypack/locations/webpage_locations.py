@@ -1,4 +1,5 @@
 from mordecai import Geoparser
+from tqdm import tqdm, tqdm_pandas
 import pandas as pd
 import bs4
 import urllib.request

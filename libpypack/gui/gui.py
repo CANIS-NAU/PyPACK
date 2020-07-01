@@ -1,263 +1,239 @@
-import sys
-import libpypack
 import pandas as pd
 import pyqtgraph as pg
+import libpypack
 
+from libpypack.locations.start_docker import run_docker
 from libpypack.locations import map_locations
 from libpypack.locations import webpage_locations
 from libpypack.visualization import generate_maps
 from libpypack.visualization import choropleth
 from libpypack.visualization import heatmap
-from libpypack.locations.start_docker import run_docker
-from matplotlib.backends.backend_qt5agg import FigureCanvas
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
-from PyQt5 import QtCore, QtGui, QtWidgets
+
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5.QtCore import pyqtProperty
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMenu, QAction,
                              QLineEdit, QLabel, QPushButton, QComboBox,
                              QFileDialog, QGridLayout, QWidget)
+from PyQt5.QtWidgets import *
 
-class GraphWindow(QMainWindow):                           # <===
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("PyPACK GUI")
-        self.resize( 800, 600 )
 
-class MplCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-        super(MplCanvas, self).__init__(fig)
+def openShapeFileNameDialog(self):
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
+    if fileName:
+        self.shapeLine.setText(fileName)
+        return fileName
+    else:
+        return None
 
-class PYPACK_GUI(QMainWindow):
+def openOutputFileNameDialog(self):
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    output_dir = QFileDialog.getExistingDirectory(self, 'Browse for Output Directory', options=options)
+    if output_dir:
+        self.outputLine.setText(output_dir)
+        return output_dir
+    else:
+        return None
 
-    def __init__(self):
-        super().__init__()
-        self.centralwidget = QWidget()
-        self.setCentralWidget(self.centralwidget)
-        # Run docker
-        run_docker()
-        self.initUI()
+def get_headers(csv_file, seperator):
+    try:
+        p2.columnBox.clear()
+        p2.columnBox.addItems(list(pd.read_csv(csv_file, nrows=0, sep=seperator).columns))
+    except:
+        p2.columnBox.addItem("No File Selected")
 
-    def create_directory(self):
-        textEdit = QTextEdit()
-        textEdit.setPlainText("Enter the file or directory you want to parse")
-
-    def get_headers(self, csv_file, seperator):
-        try:
-            self.comboBox.clear()
-            self.comboBox.addItems(list(pd.read_csv(csv_file, nrows=0, sep=seperator).columns))
-        except:
-            self.comboBox.addItem("No File Selected")
-
-    def openFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            self.inputLine.setText(fileName)
-            return fileName
-        else:
-            return None
-
-    def openInputFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
-        if fileName:
-            self.inputLine.setText(fileName)
-            if(str(self.outFileType.currentText()) == 'CSV'):
-                seperator = ","
-            else:
-                seperator = "\t"
-            self.get_headers(fileName, seperator)
-            return fileName
-        else:
-            return None
-
-    def openOutputFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        output_dir = QFileDialog.getExistingDirectory(self, 'Browse for Output Directory', options=options)
-        if output_dir:
-            self.outputLine.setText(output_dir)
-            return output_dir
-        else:
-            return None
-
-    def openShapeFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
-        if fileName:
-            self.shapeLine.setText(fileName)
-            return fileName
-        else:
-            return None
-
-    def clickMethod(self, csv_file, output_dir, filename=None):
-        loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
-                                            df_column=str(self.comboBox.currentText()))
-        return loc_df
-
-    def scrape_websites(self, csv_file):
-        if(str(self.outFileType.currentText()) == 'CSV'):
+def openInputFileNameDialog(self):
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.csv)", options=options)
+    if fileName:
+        p1.inputLine.setText(fileName)
+        if(str(p1.outFileType.currentText()) == 'CSV'):
             seperator = ","
         else:
             seperator = "\t"
-        web_df = webpage_locations.extract_webpage_locations(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
-                                            column_name=str(self.comboBox.currentText()))
-        mapped_df = webpage_locations.map_web_locations(web_df, sep=seperator, output_dir=str(self.outputLine.text()))
+        get_headers(fileName, seperator)
+        return fileName
+    else:
+        return None
 
-        return web_df
+def clickMethod(csv_file, output_dir, filename=None):
+    loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(p1.outputLine.text()), \
+                                        df_column=str(p1.columnBox.currentText()))
+    return loc_df
 
-    # Generate the Map
-    def generate_map(self, csv_file):
-        if(str(self.outFileType.currentText()) == 'CSV'):
-            seperator = ","
-        else:
-            seperator = "\t"
-        loc_df = pd.read_csv(csv_file, sep=seperator)
-        loc_gdf = generate_maps.get_loc_gdf(loc_df, column_name=str(self.comboBox.currentText()))
-        text = str(self.typeBox.currentText())
-        if(text == "Heatmap"):
-            hmap = heatmap.heatmap(loc_gdf, output_dir=str(self.outputLine.text()))
-        elif(text == "Choropleth"):
-            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.text()))
-            plot = choropleth.plot_map(gdf, output_dir=str(self.outputLine.text()))
-        elif(text == "Overlay Locations Map"):
-            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(self.shapeLine.text()))
-            plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(self.outputLine.text()))
+def scrape_websites(csv_file):
+    if(str(p1.outFileType.currentText()) == 'CSV'):
+        seperator = ","
+    else:
+        seperator = "\t"
+    web_df = webpage_locations.extract_webpage_locations(csv_file, sep=seperator, output_dir=str(p1.outputLine.text()), \
+                                        column_name=str(p2.columnBox.currentText()))
+    mapped_df = webpage_locations.map_web_locations(web_df, sep=seperator, output_dir=str(p1.outputLine.text()))
 
-    # Generate the Map
-    def overlay(self, csv_file):
-        if(str(self.outFileType.currentText()) == 'CSV'):
-            seperator = ","
-        else:
-            seperator = "\t"
-        loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(self.outputLine.text()), \
-                                            df_column=str(self.comboBox.currentText()))
-        loc_gdf = generate_maps.get_loc_gdf(loc_df)
-        text = str(self.typeBox.currentText())
-        if(text == "Heatmap"):
-            hmap = heatmap.heatmap(loc_gdf, output_dir=str(self.outputLine.text()))
-        elif(text == "Choropleth"):
-            gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(self.shapeLine.text()))
-            plot = choropleth.plot_map(gdf, output_dir=str(self.outputLine.text()))
-        elif(text == "Overlay Locations Map"):
-            gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(self.shapeLine.text()))
-            plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(self.outputLine.text()))
+    return web_df
 
-    def initUI(self):
-        self.grid = QGridLayout(self.centralwidget)
-        self.grid.setSpacing(15)
+# Generate the Map
+def generate_map(csv_file):
+    if(str(p1.outFileType.currentText()) == 'CSV'):
+        seperator = ","
+    else:
+        seperator = "\t"
+    loc_df = pd.read_csv(csv_file, sep=seperator)
+    loc_gdf = generate_maps.get_loc_gdf(loc_df, column_name=str(p2.columnBox.currentText()))
+    text = str(p2.typeBox.currentText())
+    if(text == "Heatmap"):
+        hmap = heatmap.heatmap(loc_gdf, output_dir=str(p1.outputLine.text()))
+    elif(text == "Choropleth"):
+        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p2.shapeLine.text()))
+        plot = choropleth.plot_map(gdf, output_dir=str(p1.outputLine.text()))
+    elif(text == "Map of Locations Overlay onto Shapefile"):
+        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p2.shapeLine.text()))
+        plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(p1.outputLine.text()))
 
-        # Input Label/Line
-        self.inputLabel = QLabel(self)
-        self.inputLabel.setText('Input File Path:')
-        self.inputLine = QLineEdit(self)
-        # Header Dropdown Menu
-        file_types = [
-                self.tr('None Selected'),
-                self.tr('CSV'),
-                self.tr('TSV'),
-                ]
+# Generate the Map
+def overlay(csv_file):
+    if(str(p1.outFileType.currentText()) == 'CSV'):
+        seperator = ","
+    else:
+        seperator = "\t"
+    loc_df = map_locations.locations_df(csv_file, sep=seperator, output_dir=str(p1.outputLine.text()), \
+                                        df_column=str(p2.columnBox.currentText()))
+    loc_gdf = generate_maps.get_loc_gdf(loc_df)
+    text = str(p2.typeBox.currentText())
+    if(text == "Heatmap"):
+        hmap = heatmap.heatmap(loc_gdf, output_dir=str(p1.outputLine.text()))
+    elif(text == "Choropleth"):
+        gdf = choropleth.choropleth_map(loc_gdf, shp_path=str(p2.shapeLine.text()))
+        plot = choropleth.plot_map(gdf, output_dir=str(p1.outputLine.text()))
+    elif(text == "Map of Locations Overlay onto Shapefile"):
+        gdf, loc_gdf = generate_maps.generate_overlay_gdf(loc_df, shp_path=str(p2.shapeLine.text()))
+        plot = generate_maps.plot_gdf(gdf, loc_gdf, output_dir=str(p1.outputLine.text()))
 
-        self.outFileLabel = QLabel(self)
-        self.outFileLabel.setText('Input File Type:')
-        self.outFileType = QComboBox(self)
-        self.outFileType.addItems(file_types)
+app = QApplication([])
 
-        self.comboBoxLabel = QLabel(self)
-        self.comboBoxLabel.setText('Column to Analyze:')
-        self.comboBox = QComboBox(self)
+# page 1
+p1 = QWizardPage()
+layout = QtWidgets.QVBoxLayout()
+p1.setTitle('PyPACK File Configuration')
+# Input Label/Line
+file_types = [
+        p1.tr('CSV'),
+        p1.tr('TSV'),
+        ]
 
-        # Output Label/Line
-        self.outputLabel = QLabel(self)
-        self.outputLabel.setText('Output File Path:')
-        self.outputLine = QLineEdit(self)
+p1.fileLabel= QLabel("Please Choose Type of File")
+p1.outFileType = QComboBox(p1)
+p1.outFileType.addItems(file_types)
 
-        # Output Label/Line
-        self.shapeLabel = QLabel(self)
-        self.shapeLabel.setText('Shape File Path:')
-        self.shapeLine = QLineEdit(self)
+p1.inputLabel = QLabel("Please Enter or Browse for an Input File")
+p1.open_file = QPushButton('Browse for Input File', p1)
+p1.open_file.clicked.connect(lambda: openInputFileNameDialog(p1))
+p1.inputLine = QLineEdit(p1)
+p1.outputLine = QLineEdit(p1)
 
-        # Map Types
-        self.graphWidget = pg.PlotWidget()
+# Browse for Output File Path
+p1.outputLabel = QLabel("Please Enter or Browse for an Output Directory")
+p1.output_file = QPushButton('Browse for Output Directory', p1)
+p1.output_file.clicked.connect(lambda: openOutputFileNameDialog(p1))
 
-        # Browse for Input File Path
-        open_file = QPushButton('Browse for Input File', self)
-        open_file.clicked.connect(lambda: self.openInputFileNameDialog())
+layout.addWidget(p1.fileLabel)
+layout.addWidget(p1.outFileType)
+layout.addWidget(p1.inputLabel)
+layout.addWidget(p1.inputLine)
+layout.addWidget(p1.open_file)
+layout.addWidget(p1.outputLabel)
+layout.addWidget(p1.outputLine)
+layout.addWidget(p1.output_file)
 
-        # Browse for ShapeFile Path
-        shape_file = QPushButton('Browse for Shape File', self)
-        shape_file.clicked.connect(lambda: self.openShapeFileNameDialog())
+p1.setLayout(layout)
 
-        # Browse for Output File Path
-        output_file = QPushButton('Browse for Output Directory', self)
-        output_file.clicked.connect(lambda: self.openOutputFileNameDialog())
+# page 2
+p2 = QWizardPage()
+layout = QtWidgets.QVBoxLayout()
+p2.setTitle('PyPACK Column Selection')
+p2.columnLabel = QLabel("Please Choose a Column to Analyze")
+p2.columnBox = QComboBox(p2)
 
-        # Parse Locations button
-        parse_locs = QPushButton('Parse Locations Only', self)
-        parse_locs.clicked.connect(lambda: self.clickMethod(self.inputLine.text(), self.outputLine.text()))
-        # Gen-Map Button
-        gen_maps = QPushButton('Generate Map and Parse Locations', self)
-        gen_maps.clicked.connect(lambda: self.overlay(self.inputLine.text()))
+# Browse for ShapeFile Path
+p2.shapeLabel = QLabel("***OPTIONAL*** (Browse Only if Generating an Overlay/Choropleth Map)")
+p2.shapeLine = QLineEdit(p2)
+p2.shape_file = QPushButton('Browse for Shape File', p2)
+p2.shape_file.clicked.connect(lambda: openShapeFileNameDialog(p2))
 
-        # Websites Location
-        websites = QPushButton('Scrape Websites', self)
-        websites.clicked.connect(lambda: self.scrape_websites(self.inputLine.text()))
+# List of Map Types PyPACK Supports
+map_types = [
+        p2.tr('Heatmap'),
+        p2.tr('Choropleth'),
+        p2.tr('Map of Locations Overlay onto Shapefile'),
+        ]
+# Map Drop-Down Box
+p2.mapTypeLabel = QLabel("If Generating a Map, Please Select Type of Map")
+p2.typeBox = QComboBox(p2)
+p2.typeBox.addItems(map_types)
 
-        # Websites Location
-        gen_map = QPushButton('Generate Map Only', self)
-        gen_map.clicked.connect(lambda: self.generate_map(self.inputLine.text()))
+# Column information
+layout.addWidget(p2.columnLabel)
+layout.addWidget(p2.columnBox)
 
-        # List of Map Types PyPACK Supports
-        map_types = [
-                self.tr('Heatmap'),
-                self.tr('Choropleth'),
-                self.tr('Map of Locations Overlay onto Shapefile'),
-                ]
-        # Map Drop-Down Box
-        self.mapTypeLabel = QLabel(self)
-        self.mapTypeLabel.setText('Map Type:')
-        self.typeBox = QComboBox(self)
-        self.typeBox.addItems(map_types)
+# Type of Maps
+layout.addWidget(p2.mapTypeLabel)
+layout.addWidget(p2.typeBox)
 
-        # Line Edits
-        self.grid.addWidget(self.inputLabel, 1, 0)
-        self.grid.addWidget(self.inputLine, 1, 1)
-        self.grid.addWidget(self.outFileLabel, 1, 2)
-        self.grid.addWidget(self.outFileType, 1, 3)
-        self.grid.addWidget(self.comboBoxLabel, 2, 2)
-        self.grid.addWidget(self.comboBox, 2, 3)
-        self.grid.addWidget(self.outputLabel, 3, 0)
-        self.grid.addWidget(self.outputLine, 3, 1)
-        self.grid.addWidget(self.shapeLabel, 5, 0)
-        self.grid.addWidget(self.shapeLine, 5, 1)
-
-        # Browsers
-        self.grid.addWidget(open_file, 2, 1)
-        self.grid.addWidget(output_file, 4, 1)
-        self.grid.addWidget(shape_file, 6, 1)
-
-        # Buttons
-        self.grid.addWidget(parse_locs, 8, 2)
-        self.grid.addWidget(self.mapTypeLabel, 7, 0)
-        self.grid.addWidget(self.typeBox, 7, 1)
-        self.grid.addWidget(gen_maps, 7, 2)
-        self.grid.addWidget(websites, 7, 3)
-        self.grid.addWidget(gen_map, 8, 3)
-
-        # self.setGeometry(500, 500, 500, 400)
-        self.show()
+# Shapefile information
+layout.addWidget(p2.shapeLabel)
+layout.addWidget(p2.shapeLine)
+layout.addWidget(p2.shape_file)
 
 
-def main():
-    app = QApplication(sys.argv)
-    ex = PYPACK_GUI()
-    sys.exit(app.exec_())
+p2.setLayout(layout)
+
+# page 3
+p3 = QWizardPage()
+p3.setTitle('PyPACK Action Selection')
+layout = QtWidgets.QVBoxLayout()
+p3.fileLabel= QLabel("What you would like to do?")
+p3.gen_maps = QPushButton("Extract Locations and Generate Map", p3)
+p3.scrape_web = QPushButton("Scrape Websites", p3)
+p3.gen_map_only = QPushButton("Generate a Map Only", p3)
+p3.extract_locs = QPushButton("Extract Locations Only", p3)
+
+# Parse Locations button
+p3.extract_locs.clicked.connect(lambda: clickMethod(p1.inputLine.text(), p1.outputLine.text()))
+
+# Gen-Map Button
+p3.gen_maps.clicked.connect(lambda: overlay(p1.inputLine.text()))
+
+# Websites Location
+p3.scrape_web.clicked.connect(lambda: scrape_websites(p1.inputLine.text()))
+
+# Websites Location
+p3.gen_map_only.clicked.connect(lambda: generate_map(p1.inputLine.text()))
+
+layout.addWidget(p3.fileLabel)
+layout.addWidget(p3.gen_maps)
+layout.addWidget(p3.scrape_web)
+layout.addWidget(p3.gen_map_only)
+layout.addWidget(p3.extract_locs)
+p3.setLayout(layout)
+
+
+
+
+# wizard
 
 if __name__ == '__main__':
-    main()
+    import sys
+    wizard = QWizard()
+    # Run docker
+    run_docker()
+    wizard.addPage(p1)
+    wizard.addPage(p2)
+    wizard.addPage(p3)
+    wizard.show()
+    sys.exit(app.exec_())
