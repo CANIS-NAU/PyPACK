@@ -227,7 +227,7 @@ p3.setLayout(layout)
 
 # wizard
 
-if __name__ == '__main__':
+def main():
     import sys
     wizard = QWizard()
     # Run docker
