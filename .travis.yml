@@ -49,7 +49,7 @@ script:
       else
         echo "Invalid OS";
       fi
-    - travis-sphinx build --source=docs --nowarn # The sphinx build script
+    # - travis-sphinx build --source=docs --nowarn # The sphinx build script
 
 after_success:
   # Code Coverage
