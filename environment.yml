@@ -17,6 +17,6 @@ dependencies:
   - pip
   - pip:
     - mordecai
-    - keras=2.3.1
+    - keras==2.3.1
     - pyqtgraph
     - docker
